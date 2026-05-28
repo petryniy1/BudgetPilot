@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FF007FAC"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".presentation.view.fragments.MoneyHolderFragment">
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabMoneyHolder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="44dp"
+        android:layout_marginBottom="52dp"
+        android:contentDescription="@string/description"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_add" />
+
+    <TextView
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginVertical="8dp"
+        android:textSize="24sp"
+        android:text="@string/fragmentMoneyHolderText" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerMoneyHolder"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginVertical="8dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_money_holder" />
+
+</RelativeLayout>

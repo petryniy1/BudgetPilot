@@ -1,0 +1,96 @@
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/item_operation"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="8dp"
+    android:background="@color/white"
+    android:orientation="vertical"
+    app:cardCornerRadius="4dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/itemCategory"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginHorizontal="4dp"
+            android:layout_marginVertical="4dp"
+            android:layout_toStartOf="@+id/itemValue"
+            android:layout_toEndOf="@+id/itemImageId"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:maxLines="1"
+            android:padding="8dp"
+            android:textAppearance="?attr/textAppearanceSubtitle1"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="itemCategory" />
+
+        <TextView
+            android:id="@+id/itemTypeOfValue"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/itemCategory"
+            android:layout_alignStart="@+id/itemCategory"
+            android:layout_alignEnd="@+id/itemCategory"
+            android:layout_marginHorizontal="4dp"
+            android:layout_marginVertical="4dp"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:maxLines="1"
+            android:padding="8dp"
+            android:textAppearance="?attr/textAppearanceSubtitle1"
+            android:textColor="#050000"
+            android:textSize="14sp"
+            tools:text="itemTypeOfValue" />
+
+        <TextView
+            android:id="@+id/itemValue"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginHorizontal="4dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="10dp"
+            android:layout_toStartOf="@+id/textViewCurrency"
+            android:gravity="center"
+            android:textAppearance="?attr/textAppearanceSubtitle1"
+            android:textStyle="bold"
+            tools:text="itemValue" />
+
+        <ImageView
+            android:id="@+id/itemImageId"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginHorizontal="4dp"
+            android:layout_marginStart="6dp"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            tools:src="@drawable/ic_credit_card" />
+
+        <TextView
+            android:id="@+id/textViewCurrency"
+            android:layout_width="40dp"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginHorizontal="4dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="4dp"
+            android:gravity="center"
+            android:text="@string/currency"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

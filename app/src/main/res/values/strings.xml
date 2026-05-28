@@ -1,0 +1,51 @@
+<resources>
+    <string name="app_name">BudgetPilot</string>
+    <string name="currency">BYN</string>
+    <string name="todo">TODO</string>
+    <string name="typeCash">Наличные</string>
+    <string name="typeNonCash">Карта</string>
+
+    <string name="activity_main_button_text">Фильтровать по</string>
+    <string name="activity_main_text">Новостей не найдено! Проверьте значение фильтра!</string>
+    <string name="bottomsheet_radiodate_text">Дате</string>
+    <string name="bottomsheet_radiotheme_text">Категории</string>
+    <string name="bottomsheet_radioauthor_text">Счёту</string>
+    <string name="buttomsheet_radiodelete_text">Убрать фильтр</string>
+    <string name="bottom_text_error">Новостей не найдено! Проверьте значение фильтров!</string>
+    <string name="update_news_title">Update news</string>
+    <string name="filter_news_title">Filter news</string>
+
+    <string name="msg_currency_byn_amount_format">%1$.2f</string>
+
+    <string name="errorMonyHolderText">Вы не ввели значение</string>
+    <string name="errorMonyHolderType">Вы не выбрали тип</string>
+    <string name="errorMonyHolderBalance">Вы не ввели текущий баланс</string>
+    <string name="categoryCar">Машина</string>
+    <string name="categoryProd">Продукты</string>
+    <string name="categoryPets">Животные</string>
+    <string name="categoryChild">Дети</string>
+    <string name="categoryHouse">Дом</string>
+    <string name="categoryRelax">Отдых</string>
+    <string name="errorAddOperationType">Вы не выбрали расход/доход!</string>
+    <string name="errorAddOperationValue">Вы не ввели значение</string>
+    <string name="errorAddOperationCategory">Вы не выбрали категорию расхода!</string>
+    <string name="errorAddOperationMoneyHolder">Вы не выбрали счёт</string>
+    <string name="errorAddOperationDate">Вы не выбрали дату</string>
+    <string name="toastAddOperation">Операция добавлена!</string>
+    <string name="datePickerText">Выберете дату</string>
+    <string name="activityMainBalance">Баланс:</string>
+    <string name="bottomAddMoneyName">Введите название</string>
+    <string name="bottomAddMoneyType">Выберете категорию</string>
+    <string name="bottomAddMoneyBalance">Введите текущий баланс</string>
+    <string name="textButtonSave">Сохранить</string>
+    <string name="chipCreditText">Расход</string>
+    <string name="chipDebitText">Доход</string>
+    <string name="bottomAddOperationValue">Введите значение</string>
+    <string name="bottomAddOperationMoneyHolder">Выберите счёт</string>
+    <string name="bottomAddOperationDate">Выберете дату</string>
+    <string name="bottomAddOperationComment">Комментарий</string>
+    <string name="description">imageViewCategory</string>
+    <string name="bottomEditOperationHintComment">Комментарий:</string>
+    <string name="bottomFilterHintMoneyHolder">Выберите счёт</string>
+    <string name="fragmentMoneyHolderText">Карты и наличные</string>
+</resources>

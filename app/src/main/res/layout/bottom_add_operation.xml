@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottom_add_operation"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="2dp"
+    android:layout_marginVertical="2dp"
+    android:orientation="vertical"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginVertical="10dp"
+        android:layout_weight="2"
+        android:orientation="horizontal">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupDC"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:chipSpacingHorizontal="20dp"
+            app:selectionRequired="true"
+            app:singleLine="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipCredit"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentBottom="true"
+                android:checkable="true"
+                android:text="@string/chipCreditText"
+                android:textAlignment="center"
+                android:textSize="18sp"
+                app:chipMinHeight="50dp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipDebit"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginTop="0dp"
+                android:checkable="true"
+                android:text="@string/chipDebitText"
+                android:textAlignment="center"
+                android:textSize="18sp"
+                app:chipMinHeight="50dp" />
+        </com.google.android.material.chip.ChipGroup>
+    </RelativeLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilAddValue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="20dp"
+        android:hint="@string/bottomAddOperationValue">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:digits="0123456789."
+            android:imeOptions="actionDone"
+            android:inputType="number" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <HorizontalScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupType"
+            android:layout_width="wrap_content"
+            android:layout_height="75dp"
+            app:selectionRequired="true"
+            app:singleSelection="true"
+            app:singleLine="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipCar"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="60dp"
+                android:layout_height="74dp"
+                android:layout_marginHorizontal="8dp"
+                android:checkable="true"
+                app:chipIcon="@drawable/ic_car"
+                app:chipIconSize="50dp"
+                app:chipIconVisible="true"
+                app:chipMinHeight="35dp"
+                app:chipStartPadding="6dp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipProducts"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="60dp"
+                android:layout_height="74dp"
+                android:layout_marginHorizontal="8dp"
+                android:checkable="true"
+                app:chipIcon="@drawable/ic_products"
+                app:chipIconSize="45dp"
+                app:chipIconVisible="true"
+                app:chipMinHeight="35dp"
+                app:chipStartPadding="6dp"
+                app:iconStartPadding="4dp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipPets"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="60dp"
+                android:layout_height="74dp"
+                android:layout_marginHorizontal="8dp"
+                android:checkable="true"
+                app:chipIcon="@drawable/ic_pets"
+                app:chipIconSize="50dp"
+                app:chipIconVisible="true"
+                app:chipMinHeight="35dp"
+                app:chipStartPadding="6dp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipChildren"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="60dp"
+                android:layout_height="74dp"
+                android:layout_marginHorizontal="8dp"
+                android:checkable="true"
+                app:chipIcon="@drawable/ic_child"
+                app:chipIconSize="50dp"
+                app:chipIconVisible="true"
+                app:chipMinHeight="35dp"
+                app:chipStartPadding="6dp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipHouse"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="60dp"
+                android:layout_height="74dp"
+                android:layout_marginHorizontal="8dp"
+                android:checkable="true"
+                app:chipIcon="@drawable/ic_house"
+                app:chipIconSize="50dp"
+                app:chipIconVisible="true"
+                app:chipMinHeight="35dp"
+                app:chipStartPadding="6dp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipRelax"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="60dp"
+                android:layout_height="74dp"
+                android:layout_marginHorizontal="8dp"
+                android:checkable="true"
+                app:chipIcon="@drawable/ic_coffee"
+                app:chipIconSize="50dp"
+                app:chipIconVisible="true"
+                app:chipMinHeight="35dp"
+                app:chipStartPadding="6dp" />
+
+        </com.google.android.material.chip.ChipGroup>
+
+    </HorizontalScrollView>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilAddMoneyHolder"
+        android:layout_marginTop="20dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="false"
+        android:hint="@string/bottomAddOperationMoneyHolder"
+        >
+
+        <AutoCompleteTextView
+            android:focusable="false"
+            android:id="@+id/actvAddOperation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilAddDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:hint="@string/bottomAddOperationDate">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tilAddDateClick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:focusable="false" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilAddComments"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:hint="@string/bottomAddOperationComment">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center"
+        android:id="@+id/buttonOperationSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/textButtonSave"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/debitEditComment" />
+
+</LinearLayout>
