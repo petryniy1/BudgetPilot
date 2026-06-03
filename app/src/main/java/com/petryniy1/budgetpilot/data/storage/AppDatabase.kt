@@ -2,13 +2,13 @@ package com.petryniy1.budgetpilot.data.storage
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.petryniy1.budgetpilot.data.storage.models.MoneyHolderEntity
+import com.petryniy1.budgetpilot.data.storage.models.AccountEntity
 import com.petryniy1.budgetpilot.data.storage.models.OperationEntity
 
 @Database(
     entities = [
         OperationEntity::class,
-        MoneyHolderEntity::class
+        AccountEntity::class
     ],
     exportSchema = false,
     version = AppDatabase.VERSION

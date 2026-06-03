@@ -6,5 +6,5 @@ data class OperationWithMoneyHolderEntity(
     @Embedded
     val operationEntity: OperationEntity,
     @Embedded
-    val moneyHolderEntity: MoneyHolderEntity
+    val accountEntity: AccountEntity
 )

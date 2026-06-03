@@ -67,7 +67,7 @@ class EditOperationBottom : BottomSheetDialogFragment() {
                     if (it != null) {
 
                         val itemOperation = it.operationEntity
-                        val itemMoneyHolder = it.moneyHolderEntity
+                        val itemMoneyHolder = it.accountEntity
 
                         binding.run {
                             imageViewCategory.setImageResource(itemOperation.categoryDrawable)

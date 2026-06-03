@@ -1,6 +1,6 @@
 package com.petryniy1.budgetpilot.data
 
-import com.petryniy1.budgetpilot.data.storage.models.MoneyHolderEntity
+import com.petryniy1.budgetpilot.data.storage.models.AccountEntity
 import com.petryniy1.budgetpilot.data.storage.models.OperationEntity
 import com.petryniy1.budgetpilot.data.storage.models.OperationWithMoneyHolderEntity
 import com.petryniy1.budgetpilot.domain.models.MoneyHolder
@@ -18,7 +18,7 @@ fun Operation.toOperationEntity() =
         comment = comment
     )
 
-fun MoneyHolderEntity.toMoneyHolder() =
+fun AccountEntity.toMoneyHolder() =
     MoneyHolder(
         id = moneyId!!,
         name = name!!,
@@ -27,7 +27,7 @@ fun MoneyHolderEntity.toMoneyHolder() =
     )
 
 fun MoneyHolder.toMoneyHolderEntity() =
-    MoneyHolderEntity(
+    AccountEntity(
         moneyId = if (id == 0) null else id,
         name = name,
         type = type,
@@ -37,7 +37,7 @@ fun MoneyHolder.toMoneyHolderEntity() =
 fun OperationWithMoneyHolderEntity.toOperationWithMoneyHolder() =
     OperationWithMoneyHolder(
         operationEntity = operationEntity,
-        moneyHolderEntity = moneyHolderEntity
+        accountEntity = accountEntity
     )
 
 

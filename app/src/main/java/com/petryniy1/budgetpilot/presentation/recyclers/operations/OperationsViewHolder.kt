@@ -39,7 +39,7 @@ class OperationsViewHolder(
         with(binding) {
 
             itemCategory.text = operationItem.operationEntity.category
-            itemTypeOfValue.text = operationItem.moneyHolderEntity.name
+            itemTypeOfValue.text = operationItem.accountEntity.name
             itemValue.text = root.context.getString(
                 R.string.msg_currency_byn_amount_format,
                 item.operationEntity.value / 100f
