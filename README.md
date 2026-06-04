@@ -2,6 +2,11 @@
 
 BudgetPilot is an Android application for tracking personal and household finances.
 
+![Platform](https://img.shields.io/badge/platform-Android-green)
+![Language](https://img.shields.io/badge/language-Kotlin-blue)
+![Architecture](https://img.shields.io/badge/architecture-MVVM-orange)
+![Database](https://img.shields.io/badge/database-Room-lightgrey)
+
 The app helps users manage cash and card accounts, record income and expense operations, filter transactions, and monitor their current balance in one place.
 
 ## Current Features
