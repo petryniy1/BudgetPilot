@@ -58,7 +58,7 @@ class RepositoryImpl @Inject constructor(
     }
 
     override fun getMoneyHolders(): Flow<List<MoneyHolder?>> {
-        return moneyHolderDao.getMoneyHolders().map {
+        return moneyHolderDao.getAccounts().map {
             it.map { moneyHolderEntity ->
                 moneyHolderEntity.toMoneyHolder()
             }
@@ -67,30 +67,30 @@ class RepositoryImpl @Inject constructor(
 
     override suspend fun getMoneyHolderById(id: Int): MoneyHolder? {
         return withContext(Dispatchers.IO) {
-            moneyHolderDao.getMoneyHolderById(id).toMoneyHolder()
+            moneyHolderDao.getAccountById(id).toMoneyHolder()
         }
     }
 
     override suspend fun addMoneyHolder(moneyHolder: MoneyHolder) {
         withContext(Dispatchers.IO) {
-            moneyHolderDao.addMoneyHolder(moneyHolder.toMoneyHolderEntity())
+            moneyHolderDao.addAccount(moneyHolder.toMoneyHolderEntity())
         }
     }
 
     override suspend fun updateMoneyHolder(moneyHolder: MoneyHolder) {
         withContext(Dispatchers.IO) {
-            moneyHolderDao.updateMoneyHolder(moneyHolder.toMoneyHolderEntity())
+            moneyHolderDao.updateAccount(moneyHolder.toMoneyHolderEntity())
         }
     }
 
     override suspend fun deleteMoneyHolder(id: Int) {
         withContext(Dispatchers.IO) {
-            moneyHolderDao.deleteMoneyHolder(id)
+            moneyHolderDao.deleteAccount(id)
         }
     }
 
     override fun getMoneyHoldersSumBalance(): Flow<Long?> {
-        return moneyHolderDao.getMoneyHoldersSumBalance().flowOn(Dispatchers.IO)
+        return moneyHolderDao.getAccountTotalBalance().flowOn(Dispatchers.IO)
     }
 
 }

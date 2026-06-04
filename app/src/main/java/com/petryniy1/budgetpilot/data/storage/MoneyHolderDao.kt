@@ -9,21 +9,21 @@ import com.petryniy1.budgetpilot.data.storage.models.AccountEntity
 
 @Dao
 interface MoneyHolderDao {
-    @Query("SELECT*FROM moneyHolder")
-    fun getMoneyHolders(): Flow<List<AccountEntity>>
+    @Query("SELECT * FROM accounts")
+    fun getAccounts(): Flow<List<AccountEntity>>
 
-    @Query("SELECT*FROM moneyHolder WHERE moneyId = :id")
-    suspend fun getMoneyHolderById(id: Int): AccountEntity
+    @Query("SELECT * FROM accounts WHERE id = :id")
+    suspend fun getAccountById(id: Int): AccountEntity
 
     @Insert
-    suspend fun addMoneyHolder(accountEntity: AccountEntity)
+    suspend fun addAccount(accountEntity: AccountEntity)
 
     @Update
-    suspend fun updateMoneyHolder(accountEntity: AccountEntity)
+    suspend fun updateAccount(accountEntity: AccountEntity)
 
-    @Query("DELETE FROM moneyHolder WHERE moneyId = :id")
-    suspend fun deleteMoneyHolder(id: Int)
+    @Query("DELETE FROM accounts WHERE id = :id")
+    suspend fun deleteAccount(id: Int)
 
-    @Query("SELECT SUM(balance) FROM moneyHolder")
-    fun getMoneyHoldersSumBalance(): Flow<Long>
+    @Query("SELECT COALESCE(SUM(balance_minor), 0) FROM accounts")
+    fun getAccountTotalBalance(): Flow<Long>
 }
