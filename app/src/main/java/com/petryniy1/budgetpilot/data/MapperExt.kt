@@ -1,43 +1,44 @@
 package com.petryniy1.budgetpilot.data
 
-import com.petryniy1.budgetpilot.data.storage.models.MoneyHolderEntity
+import com.petryniy1.budgetpilot.data.storage.models.AccountEntity
 import com.petryniy1.budgetpilot.data.storage.models.OperationEntity
 import com.petryniy1.budgetpilot.data.storage.models.OperationWithMoneyHolderEntity
 import com.petryniy1.budgetpilot.domain.models.MoneyHolder
 import com.petryniy1.budgetpilot.domain.models.Operation
 import com.petryniy1.budgetpilot.domain.models.OperationWithMoneyHolder
 
+fun AccountEntity.toMoneyHolder() =
+    MoneyHolder(
+        id = id,
+        name = name,
+        type = type.toIntOrNull() ?: 0,
+        balance = balanceMinor
+    )
+
+fun MoneyHolder.toMoneyHolderEntity() =
+    AccountEntity(
+        id = id,
+        name = name,
+        type = type.toString(),
+        balanceMinor = balance,
+        currencyCode = "PLN"
+    )
+
 fun Operation.toOperationEntity() =
     OperationEntity(
         id = id,
         category = category,
-        moneyHolderId = moneyHolderId,
+        accountId = moneyHolderId,
         value = value,
         categoryDrawable = categoryDrawable,
         date = date,
         comment = comment
     )
 
-fun MoneyHolderEntity.toMoneyHolder() =
-    MoneyHolder(
-        id = moneyId!!,
-        name = name!!,
-        type = type,
-        balance = balance!!
-    )
-
-fun MoneyHolder.toMoneyHolderEntity() =
-    MoneyHolderEntity(
-        moneyId = if (id == 0) null else id,
-        name = name,
-        type = type,
-        balance = balance
-    )
-
 fun OperationWithMoneyHolderEntity.toOperationWithMoneyHolder() =
     OperationWithMoneyHolder(
         operationEntity = operationEntity,
-        moneyHolderEntity = moneyHolderEntity
+        accountEntity = accountEntity
     )
 
 

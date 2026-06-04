@@ -7,16 +7,16 @@ import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import com.petryniy1.budgetpilot.data.storage.models.OperationEntity
 import com.petryniy1.budgetpilot.data.storage.models.OperationWithMoneyHolderEntity
+import androidx.room.Transaction
 
 @Dao
 interface OperationsDAO {
-
-    @Query("SELECT * FROM moneyHolder " +
-            "JOIN operations as emb_ ON moneyHolder.moneyId = emb_.moneyHolderId")
+    @Transaction
+    @Query("SELECT * FROM operations ")
     fun getOperations(): Flow<List<OperationWithMoneyHolderEntity>>
 
-    @Query("SELECT * FROM operations " +
-            "JOIN moneyHolder as emb_ ON operations.id = :id")
+    @Transaction
+    @Query("SELECT * FROM operations WHERE id = :id")
     fun getOperationById(id: Int): Flow<OperationWithMoneyHolderEntity>
 
     @Insert
@@ -28,7 +28,6 @@ interface OperationsDAO {
     @Query("DELETE FROM operations WHERE id = :id")
     suspend fun deleteOperations(id: Int)
 
-    @Query("SELECT SUM(value) FROM operations")
+    @Query("SELECT COALESCE(SUM(value), 0) FROM operations")
     fun getOperationsSumValue(): Flow<Long>
-
 }

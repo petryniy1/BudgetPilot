@@ -67,22 +67,23 @@ class EditOperationBottom : BottomSheetDialogFragment() {
                     if (it != null) {
 
                         val itemOperation = it.operationEntity
-                        val itemMoneyHolder = it.moneyHolderEntity
+                        val itemMoneyHolder = it.accountEntity
 
                         binding.run {
                             imageViewCategory.setImageResource(itemOperation.categoryDrawable)
                             textViewValue.text = root.context.getString(
                                 R.string.msg_currency_byn_amount_format,
-                                itemOperation.value / 100f)
+                                itemOperation.value / 100f
+                            )
                             textViewCategory.text = itemOperation.category
                             textViewDate.text = itemOperation.date
                             textViewMoneyHolder.text = itemMoneyHolder.name
 
-                            itemMoneyHolder.type?.let { it1 ->
-                                imageViewMoneyHolder.setImageResource(
-                                    it1
-                                )
-                            }
+                            imageViewMoneyHolder.setImageResource(
+                                itemMoneyHolder.type.toIntOrNull()
+                                    ?: R.drawable.ic_child
+                            )
+
                             textViewComment.text = itemOperation.comment
                         }
                     }

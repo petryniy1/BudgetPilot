@@ -20,7 +20,7 @@ class DatePicker @Inject constructor() {
         lateinit var dateAsFormattedText: String
         val dataPicker =
             MaterialDatePicker.Builder.datePicker()
-                .setTitleText("Выберете дату")
+                .setTitleText("Select date")
                 .setSelection(selectedDateInMillis)
                 .build()
                 .apply {
@@ -29,7 +29,7 @@ class DatePicker @Inject constructor() {
                             dateInMillis?.let { Instant.ofEpochMilli(it) }, ZoneId.systemDefault()
                         )
 
-                         dateAsFormattedText =
+                        dateAsFormattedText =
                             dateTime.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
                     }
                 }
@@ -48,7 +48,5 @@ class DatePicker @Inject constructor() {
         )
         val dateAsFormattedText: String? =
             dateTime.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-
     }
-
 }
