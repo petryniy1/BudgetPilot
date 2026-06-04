@@ -42,7 +42,7 @@ class OperationsFragmentViewModel @Inject constructor(
 
             is Filter.MoneyHolderFilter -> getAllOperationsListFlow().map {
                 it.filter { operationWithMoneyHolder ->
-                    operationWithMoneyHolder?.operationEntity?.moneyHolderId == filter.id
+                    operationWithMoneyHolder?.operationEntity?.accountId == filter.id
                 }
             }
         }
@@ -52,9 +52,9 @@ class OperationsFragmentViewModel @Inject constructor(
 
     fun getOperationById(id: Int) {
         viewModelScope.launch {
-             operationsRepository.getOperationById(id).collect{
-                 _operation.value = it
-             }
+            operationsRepository.getOperationById(id).collect {
+                _operation.value = it
+            }
         }
     }
 

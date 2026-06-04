@@ -11,12 +11,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.zip
 import com.petryniy1.budgetpilot.R
 import com.petryniy1.budgetpilot.databinding.FragmentOperationsBinding
-import com.petryniy1.budgetpilot.domain.models.BaseItem
-import com.petryniy1.budgetpilot.domain.models.HeadItem
 import com.petryniy1.budgetpilot.domain.models.OperationWithMoneyHolder
 import com.petryniy1.budgetpilot.presentation.recyclers.operations.OperationsAdapter
 import com.petryniy1.budgetpilot.presentation.recyclers.operations.OperationsOnItemListener
@@ -58,9 +54,7 @@ class OperationsFragment : Fragment(R.layout.fragment_operations) {
     }
 
     private fun initRecyclerAdapter(listOperations: List<OperationWithMoneyHolder?>) {
-        listBaseItem = listOperations.toMutableList()
-        listBaseItem.add(0, HeadItem("22.02.2022"))
-        adapter.submitList(listBaseItem)
+        adapter.submitList(listOperations)
     }
 
     private fun initObservers() {
@@ -91,11 +85,5 @@ class OperationsFragment : Fragment(R.layout.fragment_operations) {
     companion object {
         const val ID_FROM_OPERATIONS_FRAGMENT = "OPERATIONS_FRAGMENT"
         private var listOperations: List<OperationWithMoneyHolder?> = emptyList()
-        private var listBaseItem: MutableList<BaseItem?> = emptyList<BaseItem>().toMutableList()
-//        = listOf(OperationWithMoneyHolder(
-//            OperationEntity(3, "2", 3, 4, 2131165310, "6", "7"),
-//        MoneyHolderEntity(1,"2", 2131165294,4)
-//        ))
     }
 }
-
