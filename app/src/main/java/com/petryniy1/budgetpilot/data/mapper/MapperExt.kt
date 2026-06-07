@@ -1,4 +1,4 @@
-package com.petryniy1.budgetpilot.data
+package com.petryniy1.budgetpilot.data.mapper
 
 import com.petryniy1.budgetpilot.data.storage.models.AccountEntity
 import com.petryniy1.budgetpilot.data.storage.models.OperationEntity

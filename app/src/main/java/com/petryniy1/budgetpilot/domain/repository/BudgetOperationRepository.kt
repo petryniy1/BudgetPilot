@@ -28,6 +28,4 @@ interface BudgetOperationRepository {
     suspend fun deleteOperationAndUpdateAccount(
         operation: BudgetOperation, updatedAccount: Account
     ): OperationActionResult
-
-    suspend fun deleteOperation(id: Int): OperationActionResult
 }
