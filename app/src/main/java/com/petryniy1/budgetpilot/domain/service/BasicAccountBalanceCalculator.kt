@@ -26,6 +26,25 @@ class BasicAccountBalanceCalculator :
         )
     }
 
+    override fun calculateAfterOperationUpdate(
+        account: Account,
+        oldOperation: BudgetOperation,
+        newOperation: BudgetOperation
+    ): Money {
+        val balanceAfterRollback = calculateAfterOperationDelete(
+            account = account,
+            operation = oldOperation
+        )
+
+        val accountAfterRollback = account.copy(balance = balanceAfterRollback)
+
+
+        return calculateAfterOperation(
+            account = accountAfterRollback,
+            operation = newOperation
+        )
+    }
+
     override fun calculateAfterOperationDelete(
         account: Account,
         operation: BudgetOperation

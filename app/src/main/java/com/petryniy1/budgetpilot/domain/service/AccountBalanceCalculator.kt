@@ -10,6 +10,12 @@ interface AccountBalanceCalculator {
         operation: BudgetOperation
     ): Money
 
+    fun calculateAfterOperationUpdate(
+        account: Account,
+        oldOperation: BudgetOperation,
+        newOperation: BudgetOperation
+    ): Money
+
     fun calculateAfterOperationDelete(
         account: Account,
         operation: BudgetOperation

@@ -25,7 +25,7 @@ class BasicBudgetOperationManager(
         if (account.balance.currency != operation.amount.currency) {
             return OperationActionResult.CurrencyMismatch
         }
-        if (!accountBalancePolicy.canWithdraw(account, operation.amount)) {
+        if (!accountBalancePolicy.canApplyOperation(account, operation)) {
             return OperationActionResult.InsufficientFunds
         }
 
@@ -41,7 +41,44 @@ class BasicBudgetOperationManager(
     }
 
     override suspend fun updateOperation(operation: BudgetOperation): OperationActionResult {
-        TODO("Not yet implemented")
+        val validationResult = operationValidator.validate(operation)
+        if (validationResult != OperationValidationResult.Valid) {
+            return OperationActionResult.ValidationError(validationResult)
+        }
+
+        val oldOperation = operationRepository.findOperation(operation.id)
+            ?: return OperationActionResult.OperationNotFound
+
+        val account = accountRepository.findAccount(operation.accountId)
+            ?: return OperationActionResult.AccountNotFound
+        if (account.balance.currency != oldOperation.amount.currency ||
+            account.balance.currency != operation.amount.currency
+        ) {
+            return OperationActionResult.CurrencyMismatch
+        }
+
+        val balanceAfterRollback = balanceCalculator.calculateAfterOperationDelete(
+            account = account,
+            operation = oldOperation
+        )
+
+        val accountAfterRollback = account.copy(balance = balanceAfterRollback)
+        if (!accountBalancePolicy.canApplyOperation(accountAfterRollback, operation)) {
+            return OperationActionResult.InsufficientFunds
+        }
+
+        val updatedBalance = balanceCalculator.calculateAfterOperationUpdate(
+            account = account,
+            oldOperation = oldOperation,
+            newOperation = operation
+        )
+
+        val updatedAccount = account.copy(balance = updatedBalance)
+
+        return operationRepository.updateOperationAndUpdateAccount(
+            operation = operation,
+            updatedAccount = updatedAccount
+        )
     }
 
     override suspend fun deleteOperation(id: Int): OperationActionResult {

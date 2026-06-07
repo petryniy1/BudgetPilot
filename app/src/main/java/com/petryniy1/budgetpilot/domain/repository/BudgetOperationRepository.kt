@@ -20,6 +20,11 @@ interface BudgetOperationRepository {
         operation: BudgetOperation, updatedAccount: Account
     ): OperationActionResult
 
+    suspend fun updateOperationAndUpdateAccount(
+        operation: BudgetOperation,
+        updatedAccount: Account
+    ): OperationActionResult
+
     suspend fun deleteOperationAndUpdateAccount(
         operation: BudgetOperation, updatedAccount: Account
     ): OperationActionResult
