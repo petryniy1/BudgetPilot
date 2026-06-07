@@ -8,6 +8,10 @@ sealed interface OperationActionResult {
     data object CurrencyMismatch : OperationActionResult
     data object DuplicateOperation : OperationActionResult
 
+    data class ValidationError(
+        val reason: OperationValidationResult
+    ) : OperationActionResult
+
     data class Error(
         val throwable: Throwable
     ) : OperationActionResult
