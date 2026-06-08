@@ -10,22 +10,22 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface BudgetOperationDao {
     @Query(
-        "SELECT * FROM operations " +
+        "SELECT * FROM budget_operations_v1 " +
                 "ORDER BY date_epoch_day DESC, id DESC"
     )
     fun observeOperations(): Flow<List<BudgetOperationEntity>>
 
-    @Query("SELECT * FROM operations WHERE id = :id")
+    @Query("SELECT * FROM budget_operations_v1 WHERE id = :id")
     fun observeOperation(id: Int): Flow<BudgetOperationEntity?>
 
     @Query(
-        "SELECT * FROM operations " +
+        "SELECT * FROM budget_operations_v1 " +
                 "WHERE account_id = :accountId " +
                 "ORDER BY date_epoch_day DESC, id DESC"
     )
     fun observeOperationsByAccount(accountId: Int): Flow<List<BudgetOperationEntity>>
 
-    @Query("SELECT * FROM operations WHERE id = :id")
+    @Query("SELECT * FROM budget_operations_v1 WHERE id = :id")
     suspend fun findOperation(id: Int): BudgetOperationEntity?
 
     @Insert
@@ -34,6 +34,6 @@ interface BudgetOperationDao {
     @Update
     suspend fun updateOperation(operation: BudgetOperationEntity)
 
-    @Query("DELETE FROM operations WHERE id = :id")
+    @Query("DELETE FROM budget_operations_v1 WHERE id = :id")
     suspend fun deleteOperation(id: Int)
 }

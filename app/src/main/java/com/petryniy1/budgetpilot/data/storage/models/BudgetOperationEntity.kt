@@ -7,7 +7,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "operations",
+    tableName = "budget_operations_v1",
     foreignKeys = [
         ForeignKey(
             entity = AccountEntity::class,

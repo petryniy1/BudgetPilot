@@ -2,13 +2,10 @@ package com.petryniy1.budgetpilot.domain.di
 
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
 import com.petryniy1.budgetpilot.data.RepositoryImpl
-import com.petryniy1.budgetpilot.data.storage.MoneyHolderDao
-import com.petryniy1.budgetpilot.data.storage.OperationsDAO
 import com.petryniy1.budgetpilot.domain.repository.MoneyHoldersRepository
 import com.petryniy1.budgetpilot.domain.repository.OperationsRepository
 
