@@ -10,6 +10,8 @@ import dagger.hilt.components.SingletonComponent
 import com.petryniy1.budgetpilot.data.storage.AppDatabase
 import com.petryniy1.budgetpilot.data.storage.MoneyHolderDao
 import com.petryniy1.budgetpilot.data.storage.OperationsDAO
+import com.petryniy1.budgetpilot.data.storage.dao.AccountDao
+import com.petryniy1.budgetpilot.data.storage.dao.BudgetOperationDao
 import javax.inject.Singleton
 
 @Module
@@ -19,7 +21,12 @@ class DataModule {
     @Singleton
     @Provides
     fun provideAppDatabase(@ApplicationContext appContext: Context): AppDatabase =
-        Room.databaseBuilder(appContext, AppDatabase::class.java, "USERDATA").build()
+        Room.databaseBuilder(
+            appContext,
+            AppDatabase::class.java, "USERDATA"
+        )
+            .addMigrations(AppDatabase.MIGRATION_1_2)
+            .build()
 
     @Singleton
     @Provides
@@ -30,4 +37,14 @@ class DataModule {
     @Provides
     fun provideMoneyHolderDao(appDatabase: AppDatabase): MoneyHolderDao =
         appDatabase.getMoneyHolderDAO()
+
+    @Singleton
+    @Provides
+    fun provideAccountDao(appDatabase: AppDatabase): AccountDao =
+        appDatabase.getAccountDao()
+
+    @Singleton
+    @Provides
+    fun provideBudgetOperationDao(appDatabase: AppDatabase): BudgetOperationDao =
+        appDatabase.getBudgetOperationDao()
 }
