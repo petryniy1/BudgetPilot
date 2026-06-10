@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -20,6 +21,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,10 +41,99 @@ import com.petryniy1.budgetpilot.presentation.uiState.OperationActionUiState
 import java.time.LocalDate
 
 @Composable
+fun BudgetOperationsScreen(
+    operations: List<BudgetOperation>,
+    actionState: OperationActionUiState,
+    onAddOperationClick: () -> Unit,
+    onOperationClick: (BudgetOperation) -> Unit,
+    onDeleteOperationClick: (Int) -> Unit
+) {
+    var operationPendingDelete by remember {
+        mutableStateOf<BudgetOperation?>(null)
+    }
+
+    operationPendingDelete?.let { operation ->
+        DeleteOperationDialog(
+            operation = operation,
+            onConfirm = { operationId ->
+                operationPendingDelete = null
+                onDeleteOperationClick(operationId)
+            },
+            onDismiss = { operationPendingDelete = null }
+        )
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        BudgetOperationsHeader(
+            onAddOperationClick = onAddOperationClick
+        )
+
+        OperationActionMessage(actionState = actionState)
+
+        BudgetOperationsContent(
+            operations = operations,
+            onOperationClick = onOperationClick,
+            onDeleteOperationClick = { operation ->
+                operationPendingDelete = operation
+            }
+        )
+    }
+}
+
+@Composable
+private fun BudgetOperationsHeader(
+    onAddOperationClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text("Operations")
+
+        Button(onAddOperationClick) {
+            Text("Add")
+        }
+    }
+}
+
+@Composable
+private fun BudgetOperationsContent(
+    operations: List<BudgetOperation>,
+    onOperationClick: (BudgetOperation) -> Unit,
+    onDeleteOperationClick: (BudgetOperation) -> Unit
+) {
+    if (operations.isEmpty()) {
+        EmptyOperationsState()
+    } else {
+        LazyColumn {
+            items(
+                items = operations,
+                key = { operation -> operation.id }
+            ) { operation ->
+                BudgetOperationItem(
+                    operation = operation,
+                    onClick = onOperationClick,
+                    onDeleteClick = onDeleteOperationClick
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun EmptyOperationsState() {
+    Text("No operations yet")
+}
+
+@Composable
 private fun BudgetOperationItem(
     operation: BudgetOperation,
     onClick: (BudgetOperation) -> Unit,
-    onDeleteClick: (Int) -> Unit
+    onDeleteClick: (BudgetOperation) -> Unit
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
 
@@ -105,13 +196,38 @@ private fun BudgetOperationItem(
                         text = { Text(text = "Delete") },
                         onClick = {
                             menuExpanded = false
-                            onDeleteClick(operation.id)
+                            onDeleteClick(operation)
                         }
                     )
                 }
             }
         }
     }
+}
+
+@Composable
+private fun DeleteOperationDialog(
+    operation: BudgetOperation,
+    onConfirm: (Int) -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = "Delete operation") },
+        text = { Text(text = "Are you sure you want to delete ${operation.title}?") },
+        confirmButton = {
+            TextButton(
+                onClick = { onConfirm(operation.id) }
+            ) {
+                Text(text = "Delete")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = "Cancel")
+            }
+        }
+    )
 }
 
 @Composable
@@ -135,51 +251,6 @@ private fun OperationActionError.toMessage(): String {
         OperationActionError.OperationNotFound -> "Operation not found"
         OperationActionError.InvalidData -> "Invalid operation data"
         OperationActionError.Unexpected -> "Unexpected error"
-    }
-}
-
-@Composable
-fun BudgetOperationsScreen(
-    operations: List<BudgetOperation>,
-    actionState: OperationActionUiState,
-    onAddOperationClick: () -> Unit,
-    onOperationClick: (BudgetOperation) -> Unit,
-    onDeleteOperationClick: (Int) -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text("Operations")
-
-            Button(onAddOperationClick) {
-                Text("Add")
-            }
-        }
-
-        OperationActionMessage(actionState = actionState)
-
-        if (operations.isEmpty()) {
-            Text("No operations yet")
-        } else {
-            LazyColumn {
-                items(
-                    items = operations,
-                    key = { operation -> operation.id }
-                ) { operation ->
-                    BudgetOperationItem(
-                        operation = operation,
-                        onClick = onOperationClick,
-                        onDeleteClick = onDeleteOperationClick
-                    )
-                }
-            }
-        }
     }
 }
 
