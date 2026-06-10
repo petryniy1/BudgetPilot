@@ -45,12 +45,15 @@
 
     <navigation
         android:id="@+id/navigationOperationsFragment"
-        app:startDestination="@id/operationsFragment">
+        app:startDestination="@id/budgetOperationsFragment">
         <fragment
             android:id="@+id/operationsFragment"
             android:name="com.petryniy1.budgetpilot.presentation.view.fragments.OperationsFragment"
             android:label="fragment_operations"
             tools:layout="@layout/fragment_operations">
+            <action
+                android:id="@+id/operationsFragment_to_budgetOperationsFragment"
+                app:destination="@id/budgetOperationsFragment" />
             <action
                 android:id="@+id/operationsFragment_to_addOperationBottom"
                 app:destination="@id/addOperationBottom" />
@@ -61,11 +64,15 @@
                 android:id="@+id/operationsFragment_to_bottomSheetFilterFragment"
                 app:destination="@id/bottomSheetFilterFragment" />
         </fragment>
+        <fragment
+            android:id="@+id/budgetOperationsFragment"
+            android:name="com.petryniy1.budgetpilot.presentation.view.fragments.v1.BudgetOperationsFragment"
+            android:label="Budget operations" />
         <dialog
             android:id="@+id/editOperationBottom"
             android:name="com.petryniy1.budgetpilot.presentation.view.bottoms.EditOperationBottom"
             android:label="EditOperationBottom"
-            tools:layout="@layout/bottom_edit_operation" >
+            tools:layout="@layout/bottom_edit_operation">
             <action
                 android:id="@+id/editOperationBottom_to_operationsFragment"
                 app:destination="@id/operationsFragment" />
@@ -86,7 +93,7 @@
             android:id="@+id/bottomSheetFilterFragment"
             android:name="com.petryniy1.budgetpilot.presentation.view.bottoms.BottomSheetFilterFragment"
             android:label="BottomSheetFilterFragment"
-            tools:layout="@layout/bottom_sheet_filter"/>
+            tools:layout="@layout/bottom_sheet_filter" />
     </navigation>
 
     <navigation

@@ -4,10 +4,13 @@ import com.petryniy1.budgetpilot.domain.repository.AccountRepository
 import com.petryniy1.budgetpilot.domain.repository.BudgetOperationRepository
 import com.petryniy1.budgetpilot.domain.service.AccountBalanceCalculator
 import com.petryniy1.budgetpilot.domain.service.AccountBalancePolicy
+import com.petryniy1.budgetpilot.domain.service.AccountManager
 import com.petryniy1.budgetpilot.domain.service.BasicAccountBalanceCalculator
+import com.petryniy1.budgetpilot.domain.service.BasicAccountManager
 import com.petryniy1.budgetpilot.domain.service.BasicBudgetOperationManager
 import com.petryniy1.budgetpilot.domain.service.BudgetOperationManager
 import com.petryniy1.budgetpilot.domain.service.DefaultAccountBalancePolicy
+import com.petryniy1.budgetpilot.domain.validation.AccountValidator
 import com.petryniy1.budgetpilot.domain.validation.OperationValidator
 import dagger.Module
 import dagger.Provides
@@ -22,6 +25,11 @@ class DomainServiceModule {
     @ViewModelScoped
     fun provideOperationValidator(): OperationValidator =
         OperationValidator()
+
+    @Provides
+    @ViewModelScoped
+    fun provideAccountValidator(): AccountValidator =
+        AccountValidator()
 
     @Provides
     @ViewModelScoped
@@ -48,5 +56,16 @@ class DomainServiceModule {
             operationValidator = operationValidator,
             balanceCalculator = balanceCalculator,
             accountBalancePolicy = accountBalancePolicy
+        )
+
+    @Provides
+    @ViewModelScoped
+    fun provideAccountManager(
+        accountRepository: AccountRepository,
+        accountValidator: AccountValidator
+    ): AccountManager =
+        BasicAccountManager(
+            accountRepository = accountRepository,
+            accountValidator = accountValidator
         )
 }
