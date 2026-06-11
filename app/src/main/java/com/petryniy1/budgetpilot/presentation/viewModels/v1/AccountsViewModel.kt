@@ -6,7 +6,9 @@ import com.petryniy1.budgetpilot.domain.models.Account
 import com.petryniy1.budgetpilot.domain.results.AccountActionResult
 import com.petryniy1.budgetpilot.domain.repository.AccountRepository
 import com.petryniy1.budgetpilot.domain.service.AccountManager
+import com.petryniy1.budgetpilot.presentation.mapper.toAccountActionUiState
 import com.petryniy1.budgetpilot.presentation.uiState.AccountActionUiState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -15,6 +17,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class AccountsViewModel @Inject constructor(
     private val accountRepository: AccountRepository,
     private val accountManager: AccountManager
