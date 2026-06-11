@@ -1,6 +1,6 @@
 package com.petryniy1.budgetpilot.presentation.mapper
 
-import com.petryniy1.budgetpilot.domain.models.results.OperationActionResult
+import com.petryniy1.budgetpilot.domain.results.OperationActionResult
 import com.petryniy1.budgetpilot.presentation.uiState.OperationActionError
 import com.petryniy1.budgetpilot.presentation.uiState.OperationActionUiState
 

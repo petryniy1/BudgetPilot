@@ -3,7 +3,7 @@ package com.petryniy1.budgetpilot.presentation.viewModels.v1
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.petryniy1.budgetpilot.domain.models.BudgetOperation
-import com.petryniy1.budgetpilot.domain.models.results.OperationActionResult
+import com.petryniy1.budgetpilot.domain.results.OperationActionResult
 import com.petryniy1.budgetpilot.domain.repository.BudgetOperationRepository
 import com.petryniy1.budgetpilot.domain.service.BudgetOperationManager
 import com.petryniy1.budgetpilot.presentation.mapper.toOperationActionUiState

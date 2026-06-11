@@ -1,7 +1,7 @@
 package com.petryniy1.budgetpilot.domain.validation
 
 import com.petryniy1.budgetpilot.domain.models.Account
-import com.petryniy1.budgetpilot.domain.models.results.AccountValidationResult
+import com.petryniy1.budgetpilot.domain.results.AccountValidationResult
 
 class AccountValidator {
     fun validate(account: Account): AccountValidationResult {

@@ -1,8 +1,8 @@
 package com.petryniy1.budgetpilot.domain.service
 
 import com.petryniy1.budgetpilot.domain.models.BudgetOperation
-import com.petryniy1.budgetpilot.domain.models.results.OperationActionResult
-import com.petryniy1.budgetpilot.domain.models.results.OperationValidationResult
+import com.petryniy1.budgetpilot.domain.results.OperationActionResult
+import com.petryniy1.budgetpilot.domain.results.OperationValidationResult
 import com.petryniy1.budgetpilot.domain.repository.AccountRepository
 import com.petryniy1.budgetpilot.domain.repository.BudgetOperationRepository
 import com.petryniy1.budgetpilot.domain.validation.OperationValidator

@@ -6,12 +6,11 @@ import com.petryniy1.budgetpilot.data.storage.dao.AccountDao
 import com.petryniy1.budgetpilot.domain.models.Account
 import com.petryniy1.budgetpilot.domain.models.CurrencyCode
 import com.petryniy1.budgetpilot.domain.models.Money
-import com.petryniy1.budgetpilot.domain.models.results.AccountActionResult
 import com.petryniy1.budgetpilot.domain.repository.AccountRepository
+import com.petryniy1.budgetpilot.domain.results.AccountActionResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
-import kotlin.collections.map
 
 class AccountRepositoryImpl @Inject constructor(
     private val accountDao: AccountDao
@@ -59,8 +58,15 @@ class AccountRepositoryImpl @Inject constructor(
 
     override suspend fun updateAccount(account: Account): AccountActionResult {
         return try {
-            accountDao.updateAccount(account.toAccountEntity())
-            AccountActionResult.Success
+            val updatedRows = accountDao
+                .updateAccount(account.toAccountEntity())
+
+            if (updatedRows == 0) {
+                AccountActionResult.AccountNotFound
+            } else {
+                AccountActionResult.Success
+            }
+
         } catch (throwable: Throwable) {
             AccountActionResult.Error(throwable)
         }
@@ -68,8 +74,14 @@ class AccountRepositoryImpl @Inject constructor(
 
     override suspend fun deleteAccount(id: Int): AccountActionResult {
         return try {
-            accountDao.deleteAccount(id)
-            AccountActionResult.Success
+            val deletedRows = accountDao.deleteAccount(id)
+
+            if (deletedRows == 0) {
+                AccountActionResult.AccountNotFound
+            } else {
+                AccountActionResult.Success
+            }
+
         } catch (throwable: Throwable) {
             AccountActionResult.Error(throwable)
         }
@@ -80,14 +92,34 @@ class AccountRepositoryImpl @Inject constructor(
         balance: Money
     ): AccountActionResult {
         return try {
-            accountDao.updateBalance(
+            val updatedRows = accountDao.updateBalance(
                 accountId = accountId,
                 balanceMinor = balance.amountMinor,
                 currencyCode = balance.currency.name
             )
-            AccountActionResult.Success
+
+            if (updatedRows == 0) {
+                AccountActionResult.AccountNotFound
+            } else {
+                AccountActionResult.Success
+            }
+
         } catch (throwable: Throwable) {
             AccountActionResult.Error(throwable)
+        }
+    }
+
+    override suspend fun existsAccountWithName(
+        name: String,
+        excludeId: Int?
+    ): Boolean {
+        return if (excludeId == null) {
+            accountDao.existsAccountWithName(name)
+        } else {
+            accountDao.existsAccountWithNameExcludingId(
+                name = name,
+                excludeId = excludeId
+            )
         }
     }
 }

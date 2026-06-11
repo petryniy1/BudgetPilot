@@ -1,4 +1,4 @@
-package com.petryniy1.budgetpilot.domain.models.results
+package com.petryniy1.budgetpilot.domain.results
 
 sealed interface AccountValidationResult {
     data object Valid : AccountValidationResult

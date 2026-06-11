@@ -1,7 +1,7 @@
 package com.petryniy1.budgetpilot.domain.validation
 
 import com.petryniy1.budgetpilot.domain.models.BudgetOperation
-import com.petryniy1.budgetpilot.domain.models.results.OperationValidationResult
+import com.petryniy1.budgetpilot.domain.results.OperationValidationResult
 
 class OperationValidator {
 
