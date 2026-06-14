@@ -37,6 +37,7 @@ class AccountsViewModel @Inject constructor(
             )
 
     private fun executeAccountAction(
+        successMessage: String,
         action: suspend () -> AccountActionResult
     ) {
         if (_accountActionState.value == AccountActionUiState.Loading) return
@@ -46,25 +47,35 @@ class AccountsViewModel @Inject constructor(
 
             val result = action()
 
-            _accountActionState.value = result.toAccountActionUiState()
+            _accountActionState.value = result.toAccountActionUiState(successMessage)
         }
     }
 
     fun createAccount(account: Account) {
-        executeAccountAction {
+        executeAccountAction(
+            successMessage = "Account created"
+        ) {
             accountManager.createAccount(account)
         }
     }
 
     fun updateAccount(account: Account) {
-        executeAccountAction {
+        executeAccountAction(
+            successMessage = "Account updated"
+        ) {
             accountManager.updateAccount(account)
         }
     }
 
     fun deleteAccount(id: Int) {
-        executeAccountAction {
+        executeAccountAction(
+            successMessage = "Account deleted"
+        ) {
             accountManager.deleteAccount(id)
         }
+    }
+
+    fun clearAccountActionState() {
+        _accountActionState.value = AccountActionUiState.Ready
     }
 }

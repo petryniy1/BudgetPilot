@@ -5,9 +5,11 @@ import com.petryniy1.budgetpilot.domain.results.AccountValidationResult
 import com.petryniy1.budgetpilot.presentation.uiState.AccountActionError
 import com.petryniy1.budgetpilot.presentation.uiState.AccountActionUiState
 
-fun AccountActionResult.toAccountActionUiState(): AccountActionUiState {
+fun AccountActionResult.toAccountActionUiState(
+    successMessage: String
+): AccountActionUiState {
     return when (this) {
-        AccountActionResult.Success -> AccountActionUiState.Success
+        AccountActionResult.Success -> AccountActionUiState.Success(successMessage)
 
         AccountActionResult.AccountNotFound -> {
             AccountActionUiState.Error(AccountActionError.AccountNotFound)

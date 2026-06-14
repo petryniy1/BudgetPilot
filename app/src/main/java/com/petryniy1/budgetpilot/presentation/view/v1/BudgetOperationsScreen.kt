@@ -117,13 +117,8 @@ fun BudgetOperationsScreen(
 
         Spacer(modifier = Modifier.height(2.dp))
 
-        OperationsSummarySection(
-            summary = summary
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
         BudgetOperationsContent(
+            summary = summary,
             operationItems = operationItems,
             onOperationClick = onOperationClick,
             onDeleteOperationClick = { operation ->
@@ -255,6 +250,7 @@ private fun OperationsSummaryCard(
 
 @Composable
 private fun BudgetOperationsContent(
+    summary: OperationsSummaryUiModel,
     operationItems: List<BudgetOperationListItemUiModel>,
     onOperationClick: (Int) -> Unit,
     onDeleteOperationClick: (BudgetOperationListItemUiModel) -> Unit
@@ -268,15 +264,28 @@ private fun BudgetOperationsContent(
             state = listState,
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            items(
-                items = operationItems,
-                key = { operation -> operation.id }
-            ) { operation ->
-                BudgetOperationItem(
-                    operation = operation,
-                    onClick = { operationItem -> onOperationClick(operationItem.id) },
-                    onDeleteClick = onDeleteOperationClick
+            item(key = "operations_summary") {
+                OperationsSummarySection(
+                    summary = summary
                 )
+            }
+            if (operationItems.isEmpty()) {
+                item(
+                    key = "empty_operations"
+                ) {
+                    EmptyOperationsState()
+                }
+            } else {
+                items(
+                    items = operationItems,
+                    key = { operation -> operation.id }
+                ) { operation ->
+                    BudgetOperationItem(
+                        operation = operation,
+                        onClick = { operationItem -> onOperationClick(operationItem.id) },
+                        onDeleteClick = onDeleteOperationClick
+                    )
+                }
             }
         }
     }

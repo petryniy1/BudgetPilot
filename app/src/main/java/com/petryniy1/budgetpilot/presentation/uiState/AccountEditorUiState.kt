@@ -8,5 +8,7 @@ data class AccountEditorUiState(
     val name: String = "",
     val accountType: AccountType = AccountType.CASH,
     val currency: CurrencyCode = CurrencyCode.PLN,
-    val balanceInput: String = ""
+    val balanceInput: String = "",
+    val nameError: String? = null,
+    val balanceError: String? = null
 )

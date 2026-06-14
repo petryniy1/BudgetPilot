@@ -4,98 +4,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginHorizontal="2dp"
-    android:layout_marginVertical="2dp"
+    android:background="#050B1C"
     android:orientation="vertical"
     tools:context=".presentation.view.MainActivity">
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/topMenu"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp"
-        android:background="#72BFBBBB">
-
-        <TextView
-            android:id="@+id/textViewBalance"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="4dp"
-            android:layout_marginVertical="4dp"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:maxLines="1"
-            android:padding="8dp"
-            android:text="@string/activityMainBalance"
-            android:textAppearance="?attr/textAppearanceSubtitle1"
-            android:textColor="#050000"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/textViewBalanceValue"
-            android:layout_width="130dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="4dp"
-            android:layout_marginVertical="4dp"
-            android:layout_marginTop="8dp"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:maxLines="1"
-            android:padding="8dp"
-            android:textAppearance="?attr/textAppearanceSubtitle1"
-            android:textColor="#050000"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textViewBalance"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="textViewBalanceValue" />
-
-        <ImageView
-            android:layout_marginEnd="20dp"
-            android:id="@+id/imageViewFilter"
-            android:layout_width="48dp"
-            android:layout_height="50dp"
-            android:contentDescription="@string/description"
-            android:src="@drawable/ic_filter"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="visible" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_container"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_above="@+id/bottom_nav_menu"
-        android:layout_below="@+id/topMenu"
         android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         app:defaultNavHost="true"
-        app:navGraph="@navigation/main_graph" />
+        app:navGraph="@navigation/main_graph_v1" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
-
         android:id="@+id/bottom_nav_menu"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="82dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_gravity="bottom"
-        android:background="#72BFBBBB"
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="14dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/bottom_nav_background"
+        android:elevation="12dp"
+        app:itemHorizontalTranslationEnabled="false"
+        app:itemIconTint="@color/bottom_nav_item_color"
+        app:itemPaddingBottom="8dp"
+        app:itemPaddingTop="12dp"
+        app:itemTextColor="@color/bottom_nav_item_color"
+        app:labelVisibilityMode="labeled"
         app:menu="@menu/bottom_menu"
-        tools:layout_height="60dp" />
-
+        tools:layout_height="82dp" />
 </RelativeLayout>

@@ -2,9 +2,11 @@ package com.petryniy1.budgetpilot.presentation.viewModels.v1
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.petryniy1.budgetpilot.domain.models.Account
 import com.petryniy1.budgetpilot.domain.models.BudgetOperation
-import com.petryniy1.budgetpilot.domain.results.OperationActionResult
+import com.petryniy1.budgetpilot.domain.repository.AccountRepository
 import com.petryniy1.budgetpilot.domain.repository.BudgetOperationRepository
+import com.petryniy1.budgetpilot.domain.results.OperationActionResult
 import com.petryniy1.budgetpilot.domain.service.BudgetOperationManager
 import com.petryniy1.budgetpilot.presentation.mapper.toOperationActionUiState
 import com.petryniy1.budgetpilot.presentation.uiState.OperationActionUiState
@@ -20,7 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class BudgetOperationsViewModel @Inject constructor(
     private val budgetOperationManager: BudgetOperationManager,
-    private val budgetOperationRepository: BudgetOperationRepository
+    private val budgetOperationRepository: BudgetOperationRepository,
+    private val accountRepository: AccountRepository
 ) : ViewModel() {
     private val _operationActionState =
         MutableStateFlow<OperationActionUiState>(OperationActionUiState.Ready)
@@ -29,6 +32,14 @@ class BudgetOperationsViewModel @Inject constructor(
 
     val operations: StateFlow<List<BudgetOperation>> =
         budgetOperationRepository.observeOperations()
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = emptyList()
+            )
+
+    val accounts: StateFlow<List<Account>> =
+        accountRepository.observeAccounts()
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000),
@@ -59,6 +70,10 @@ class BudgetOperationsViewModel @Inject constructor(
 
     fun deleteOperation(id: Int) {
         executeOperationAction { budgetOperationManager.deleteOperation(id) }
+    }
+
+    fun clearOperationActionState() {
+        _operationActionState.value = OperationActionUiState.Ready
     }
 }
 

@@ -18,14 +18,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,31 +36,27 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.petryniy1.budgetpilot.domain.models.Account
 import com.petryniy1.budgetpilot.domain.models.AccountType
-import com.petryniy1.budgetpilot.domain.models.CurrencyCode
-import com.petryniy1.budgetpilot.domain.models.Money
 import com.petryniy1.budgetpilot.presentation.design.BudgetPilotAmountNeutral
 import com.petryniy1.budgetpilot.presentation.design.BudgetPilotMetaTextStyle
 import com.petryniy1.budgetpilot.presentation.design.BudgetPilotPrimaryCardGradient
 import com.petryniy1.budgetpilot.presentation.design.BudgetPilotScreenGradient
 import com.petryniy1.budgetpilot.presentation.design.BudgetPilotTextPrimary
+import com.petryniy1.budgetpilot.presentation.design.BudgetPilotTextSecondary
 import com.petryniy1.budgetpilot.presentation.design.BudgetPilotTextShadow
 import com.petryniy1.budgetpilot.presentation.design.budgetPilotOutline
+import com.petryniy1.budgetpilot.presentation.design.components.BudgetPilotDialog
 import com.petryniy1.budgetpilot.presentation.design.components.GradientAddButton
 import com.petryniy1.budgetpilot.presentation.formatter.formatForDisplay
 import com.petryniy1.budgetpilot.presentation.mapper.toCurrencyGroups
 import com.petryniy1.budgetpilot.presentation.uiModels.AccountCurrencyGroupUiModel
-import com.petryniy1.budgetpilot.presentation.uiState.AccountActionError
-import com.petryniy1.budgetpilot.presentation.uiState.AccountActionUiState
 
 @Composable
 fun AccountsScreen(
     accounts: List<Account>,
-    actionState: AccountActionUiState,
     onAddAccountClick: () -> Unit,
     onAccountClick: (Int) -> Unit,
     onDeleteAccountClick: (Int) -> Unit
@@ -97,18 +91,11 @@ fun AccountsScreen(
             onAddAccountClick = onAddAccountClick
         )
 
-        AccountActionMessage(actionState = actionState)
-
         Spacer(modifier = Modifier.height(8.dp))
-
-        CurrencyGroupsSection(
-            currencyGroups = currencyGroups
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
 
         AccountsContent(
             accounts = accounts,
+            currencyGroups = currencyGroups,
             onAccountClick = onAccountClick,
             onDeleteAccountClick = { account ->
                 accountPendingDelete = account
@@ -193,8 +180,8 @@ private fun ExInGroupCard(
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent
         ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
+
+        ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -248,6 +235,7 @@ private fun ExInGroupCard(
 @Composable
 private fun AccountsContent(
     accounts: List<Account>,
+    currencyGroups: List<AccountCurrencyGroupUiModel>,
     onAccountClick: (Int) -> Unit,
     onDeleteAccountClick: (Account) -> Unit
 ) {
@@ -260,6 +248,14 @@ private fun AccountsContent(
             state = listState,
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
+            item(
+                key = "currency_groups"
+            ) {
+                CurrencyGroupsSection(
+                    currencyGroups = currencyGroups
+                )
+            }
+
             items(
                 items = accounts,
                 key = { account -> account.id }
@@ -438,119 +434,21 @@ private fun DeleteAccountDialog(
     onConfirm: (Int) -> Unit,
     onDismiss: () -> Unit
 ) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(text = "Delete account") },
-        text = { Text(text = "Are you sure you want to delete ${account.name}?") },
-        confirmButton = {
-            TextButton(
-                onClick = { onConfirm(account.id) }
-            ) {
-                Text(text = "Delete")
-            }
+    BudgetPilotDialog(
+        title = "Delete account",
+        confirmText = "Delete",
+        dismissText = "Cancel",
+        isDestructive = true,
+        onConfirm = {
+            onConfirm(account.id)
         },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(text = "Cancel")
-            }
-        }
-    )
-}
-
-@Composable
-private fun AccountActionMessage(
-    actionState: AccountActionUiState
-) {
-    when (actionState) {
-        AccountActionUiState.Ready -> Unit
-        AccountActionUiState.Loading -> Text("Loading...")
-        AccountActionUiState.Success -> Text("Account saved")
-        is AccountActionUiState.Error -> Text(actionState.reason.toMessage())
+        onDismiss = onDismiss
+    ) {
+        Text(
+            text = "Are you sure you want to delete ${account.name}?",
+            color = BudgetPilotTextSecondary,
+            fontSize = 15.sp,
+            fontWeight = FontWeight.SemiBold
+        )
     }
-}
-
-private fun AccountActionError.toMessage(): String {
-    return when (this) {
-        AccountActionError.AccountNotFound -> "Account not found"
-        AccountActionError.DuplicateAccountName -> "Account name already exists"
-        AccountActionError.EmptyName -> "Account name cannot be empty"
-        AccountActionError.NegativeBalance -> "Balance cannot be negative"
-        AccountActionError.Unexpected -> "Unexpected error"
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun AccountsScreenPreview() {
-    AccountsScreen(
-        accounts = listOf(
-            Account(
-                id = 1,
-                name = "Cash PLN",
-                type = AccountType.CASH,
-                balance = Money(
-                    amountMinor = 125000,
-                    currency = CurrencyCode.PLN
-                )
-            ),
-            Account(
-                id = 2,
-                name = "Santander",
-                type = AccountType.BANK_ACCOUNT,
-                balance = Money(
-                    amountMinor = 250050,
-                    currency = CurrencyCode.PLN
-                )
-            ),
-            Account(
-                id = 3,
-                name = "Santander_USD",
-                type = AccountType.BANK_ACCOUNT,
-                balance = Money(
-                    amountMinor = 250050,
-                    currency = CurrencyCode.USD
-                )
-            ),
-            Account(
-                id = 7,
-                name = "Santander_USD",
-                type = AccountType.BANK_ACCOUNT,
-                balance = Money(
-                    amountMinor = 250023232350,
-                    currency = CurrencyCode.USD
-                )
-            ),
-            Account(
-                id = 8,
-                name = "Santander_USD",
-                type = AccountType.BANK_ACCOUNT,
-                balance = Money(
-                    amountMinor = 250050,
-                    currency = CurrencyCode.USD
-                )
-            ),
-            Account(
-                id = 9,
-                name = "Santander_USD",
-                type = AccountType.BANK_ACCOUNT,
-                balance = Money(
-                    amountMinor = 250343443050,
-                    currency = CurrencyCode.USD
-                )
-            ),
-            Account(
-                id = 4,
-                name = "Santander_EUR",
-                type = AccountType.BANK_ACCOUNT,
-                balance = Money(
-                    amountMinor = 25333334550,
-                    currency = CurrencyCode.EUR
-                )
-            )
-        ),
-        actionState = AccountActionUiState.Ready,
-        onAddAccountClick = {},
-        onAccountClick = {},
-        onDeleteAccountClick = {}
-    )
 }
