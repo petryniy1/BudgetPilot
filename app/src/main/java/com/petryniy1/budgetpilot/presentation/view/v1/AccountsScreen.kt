@@ -1,7 +1,6 @@
 package com.petryniy1.budgetpilot.presentation.view.v1
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,11 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -51,12 +46,11 @@ import com.petryniy1.budgetpilot.domain.models.AccountType
 import com.petryniy1.budgetpilot.domain.models.CurrencyCode
 import com.petryniy1.budgetpilot.domain.models.Money
 import com.petryniy1.budgetpilot.presentation.design.BudgetPilotAmountNeutral
-import com.petryniy1.budgetpilot.presentation.design.BudgetPilotCurrencyFrameOverlay
+import com.petryniy1.budgetpilot.presentation.design.BudgetPilotMetaTextStyle
 import com.petryniy1.budgetpilot.presentation.design.BudgetPilotPrimaryCardGradient
 import com.petryniy1.budgetpilot.presentation.design.BudgetPilotScreenGradient
-import com.petryniy1.budgetpilot.presentation.design.BudgetPilotSoftTextShadow
 import com.petryniy1.budgetpilot.presentation.design.BudgetPilotTextPrimary
-import com.petryniy1.budgetpilot.presentation.design.BudgetPilotTextSecondary
+import com.petryniy1.budgetpilot.presentation.design.BudgetPilotTextShadow
 import com.petryniy1.budgetpilot.presentation.design.budgetPilotOutline
 import com.petryniy1.budgetpilot.presentation.design.components.GradientAddButton
 import com.petryniy1.budgetpilot.presentation.formatter.formatForDisplay
@@ -146,17 +140,23 @@ private fun AccountsHeader(
                 text = "Accounts",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.White
+                color = BudgetPilotTextPrimary,
+                style = TextStyle(
+                    shadow = BudgetPilotTextShadow
+                )
             )
 
             Text(
-                text = "$accountsCount accounts",
+                text = "$accountsCount accounts in",
                 modifier = Modifier.weight(1f),
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
                 fontStyle = FontStyle.Italic,
                 color = Color(0xFFD6E4FF),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                style = TextStyle(
+                    shadow = BudgetPilotTextShadow
+                )
             )
 
             GradientAddButton(
@@ -176,13 +176,13 @@ fun CurrencyGroupsSection(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         currencyGroups.forEach { group ->
-            CurrencyGroupCard(group = group)
+            ExInGroupCard(group = group)
         }
     }
 }
 
 @Composable
-private fun CurrencyGroupCard(
+private fun ExInGroupCard(
     group: AccountCurrencyGroupUiModel
 ) {
     Card(
@@ -192,12 +192,12 @@ private fun CurrencyGroupCard(
         shape = RoundedCornerShape(18.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent
-        )
+        ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(BudgetPilotCurrencyFrameOverlay)
                 .padding(horizontal = 14.dp, vertical = 12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.Top
@@ -208,29 +208,38 @@ private fun CurrencyGroupCard(
                 Text(
                     text = group.currency.name,
                     color = BudgetPilotTextPrimary,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
-                )
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = group.accounts.joinToString(" · ") { account ->
-                        account.name
-                    },
-                    color = BudgetPilotTextSecondary,
-                    fontSize = 12.sp
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    style = TextStyle(
+                        shadow = BudgetPilotTextShadow
+                    )
                 )
             }
-
-            Spacer(modifier = Modifier.size(12.dp))
 
             Text(
                 text = group.totalBalance.formatForDisplay(),
                 color = BudgetPilotTextPrimary,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.End
+                textAlign = TextAlign.End,
+                style = TextStyle(
+                    shadow = BudgetPilotTextShadow
+                )
+            )
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Bottom
+        ) {
+            Text(
+                text = group.accounts.joinToString(" · ") { account ->
+                    account.name
+                },
+                style = BudgetPilotMetaTextStyle
             )
         }
     }
@@ -300,7 +309,7 @@ private fun AccountItem(
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Box(
             modifier = Modifier
@@ -339,17 +348,17 @@ private fun AccountItem(
                 ) {
                     Text(
                         text = account.name,
-                        color = BudgetPilotTextSecondary,
+                        color = BudgetPilotTextPrimary,
                         fontSize = 22.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        style = TextStyle(
+                            shadow = BudgetPilotTextShadow
+                        )
                     )
 
                     Text(
                         text = account.type.toDisplayText(),
-                        color = BudgetPilotTextPrimary,
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        fontStyle = FontStyle.Italic
+                        style = BudgetPilotMetaTextStyle
                     )
                 }
             }
@@ -402,7 +411,7 @@ private fun AccountItem(
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
                 style = TextStyle(
-                    shadow = BudgetPilotSoftTextShadow
+                    shadow = BudgetPilotTextShadow
                 )
             )
         }

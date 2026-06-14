@@ -21,7 +21,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
@@ -37,9 +36,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,10 +49,22 @@ import com.petryniy1.budgetpilot.domain.models.BudgetOperation
 import com.petryniy1.budgetpilot.domain.models.CurrencyCode
 import com.petryniy1.budgetpilot.domain.models.Money
 import com.petryniy1.budgetpilot.domain.models.OperationType
+import com.petryniy1.budgetpilot.presentation.design.BudgetPilotAmountShadow
+import com.petryniy1.budgetpilot.presentation.design.BudgetPilotMetaTextStyle
+import com.petryniy1.budgetpilot.presentation.design.BudgetPilotPrimaryCardGradient
+import com.petryniy1.budgetpilot.presentation.design.BudgetPilotScreenGradient
+import com.petryniy1.budgetpilot.presentation.design.BudgetPilotTextPrimary
+import com.petryniy1.budgetpilot.presentation.design.BudgetPilotTextSecondary
+import com.petryniy1.budgetpilot.presentation.design.BudgetPilotTextShadow
+import com.petryniy1.budgetpilot.presentation.design.budgetPilotOutline
+import com.petryniy1.budgetpilot.presentation.design.components.GradientAddButton
 import com.petryniy1.budgetpilot.presentation.formatter.formatForDisplay
 import com.petryniy1.budgetpilot.presentation.formatter.formatForOperationDisplay
 import com.petryniy1.budgetpilot.presentation.mapper.toListItemUiModel
+import com.petryniy1.budgetpilot.presentation.mapper.toOperationsSummaryUiModel
 import com.petryniy1.budgetpilot.presentation.uiModels.BudgetOperationListItemUiModel
+import com.petryniy1.budgetpilot.presentation.uiModels.OperationCurrencyTotalUiModel
+import com.petryniy1.budgetpilot.presentation.uiModels.OperationsSummaryUiModel
 import com.petryniy1.budgetpilot.presentation.uiState.OperationActionError
 import com.petryniy1.budgetpilot.presentation.uiState.OperationActionUiState
 import java.time.LocalDate
@@ -84,11 +98,15 @@ fun BudgetOperationsScreen(
         )
     }
 
+    val summary = remember(operations) {
+        operations.toOperationsSummaryUiModel()
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF6F1FA))
-            .padding(16.dp)
+            .background(BudgetPilotScreenGradient)
+            .padding(12.dp)
     ) {
         BudgetOperationsHeader(
             operationsCount = operationItems.size,
@@ -96,6 +114,14 @@ fun BudgetOperationsScreen(
         )
 
         OperationActionMessage(actionState = actionState)
+
+        Spacer(modifier = Modifier.height(2.dp))
+
+        OperationsSummarySection(
+            summary = summary
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
 
         BudgetOperationsContent(
             operationItems = operationItems,
@@ -115,28 +141,114 @@ private fun BudgetOperationsHeader(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .height(80.dp)
             .padding(bottom = 16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(64.dp)
+                .padding(bottom = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(
                 text = "Operations",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF24162F)
+                color = BudgetPilotTextPrimary,
+                style = TextStyle(
+                    shadow = BudgetPilotTextShadow
+                )
             )
 
             Text(
-                text = "$operationsCount items",
-                fontSize = 12.sp,
-                color = Color(0xFF6D5A78)
+                text = "$operationsCount operations in",
+                modifier = Modifier.weight(1f),
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                fontStyle = FontStyle.Italic,
+                color = Color(0xFFD6E4FF),
+                textAlign = TextAlign.Center,
+                style = TextStyle(
+                    shadow = BudgetPilotTextShadow
+                )
             )
 
-            Button(onClick = onAddOperationClick) {
-                Text("Add")
-            }
+            GradientAddButton(
+                onClick = onAddOperationClick
+            )
+        }
+    }
+}
 
+@Composable
+fun OperationsSummarySection(
+    summary: OperationsSummaryUiModel
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        OperationsSummaryCard(
+            title = "INCOMES: ",
+            totals = summary.incomeTotals
+        )
+
+        OperationsSummaryCard(
+            title = "EXPENSES: ",
+            totals = summary.expenseTotals
+        )
+    }
+}
+
+@Composable
+private fun OperationsSummaryCard(
+    title: String,
+    totals: List<OperationCurrencyTotalUiModel>
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .budgetPilotOutline(),
+        shape = RoundedCornerShape(18.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.Transparent
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 14.dp, vertical = 12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Top
+        ) {
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = title,
+                    fontWeight = FontWeight.Bold,
+                    color = BudgetPilotTextPrimary
+                )
+
+                totals.forEach { total ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = total.currencyCode,
+                            fontStyle = FontStyle.Italic,
+                            color = BudgetPilotTextPrimary
+                        )
+
+                        Text(
+                            text = total.amountText,
+                            color = BudgetPilotTextPrimary
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -172,18 +284,18 @@ private fun BudgetOperationsContent(
 
 @Composable
 private fun EmptyOperationsState() {
-   Box(
-       modifier = Modifier.fillMaxSize(),
-       contentAlignment = Alignment.Center
-   ) {
-       Text(
-           text = "No operations yet",
-           fontSize = 24.sp,
-           fontWeight = FontWeight.Bold,
-           fontStyle = FontStyle.Italic,
-           color = Color(0xFF6D5A78)
-           )
-   }
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "No operations yet",
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            fontStyle = FontStyle.Italic,
+            color = Color(0xFF6D5A78)
+        )
+    }
 }
 
 @Composable
@@ -197,44 +309,66 @@ private fun BudgetOperationItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .budgetPilotOutline()
             .clickable { onClick(operation) },
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFE7E0EA)
+            containerColor = Color.Transparent
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(14.dp)
+                .background(BudgetPilotPrimaryCardGradient)
+                .padding(16.dp)
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(end = 88.dp),
-                verticalAlignment = Alignment.Top
+                    .padding(end = 96.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(
-                    painter = painterResource(id = operation.categoryIconRes),
-                    contentDescription = operation.categoryName,
-                    modifier = Modifier.size(32.dp)
-                )
+                Box(
+                    modifier = Modifier
+                        .size(52.dp)
+                        .background(
+                            color = Color(0xFF002967),
+                            shape = RoundedCornerShape(14.dp)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = operation.categoryIconRes),
+                        contentDescription = operation.categoryName,
+                        modifier = Modifier.size(28.dp),
+                        colorFilter = ColorFilter.tint(BudgetPilotTextPrimary)
+                    )
+                }
 
                 Spacer(modifier = Modifier.width(12.dp))
 
                 Column(
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     Text(
                         text = operation.title,
-                        fontWeight = FontWeight.Bold
+                        color = BudgetPilotTextPrimary,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        style = TextStyle(
+                            shadow = BudgetPilotTextShadow
+                        )
                     )
-
-                    Spacer(modifier = Modifier.height(4.dp))
 
                     OperationMetaInfo(
                         operation = operation
+                    )
+
+                    Text(
+                        text = operation.date.formatForOperationDisplay(),
+                        style = BudgetPilotMetaTextStyle
                     )
                 }
             }
@@ -252,7 +386,8 @@ private fun BudgetOperationItem(
                 ) {
                     Text(
                         text = "⋮",
-                        fontSize = 22.sp,
+                        color = BudgetPilotTextPrimary,
+                        fontSize = 24.sp,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -284,7 +419,10 @@ private fun BudgetOperationItem(
                 modifier = Modifier.align(Alignment.BottomEnd),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                color = operation.type.amountColor()
+                color = operation.type.amountColor(),
+                style = TextStyle(
+                    shadow = BudgetPilotAmountShadow
+                )
             )
         }
     }
@@ -305,15 +443,16 @@ private fun OperationMetaInfo(
             append(operation.date.formatForOperationDisplay())
         },
         fontSize = 12.sp,
-        color = Color.DarkGray
+        color = BudgetPilotTextSecondary,
+        style = BudgetPilotMetaTextStyle
     )
 }
 
 private fun OperationType.amountColor(): Color {
     return when (this) {
-        OperationType.EXPENSE -> Color(0xFFB00020)
-        OperationType.INCOME -> Color(0xFF0B7A3B)
-        OperationType.TRANSFER -> Color(0xFF4B5563)
+        OperationType.EXPENSE -> Color(0xFFFF1435)
+        OperationType.INCOME -> Color(0xFF38E07B)
+        OperationType.TRANSFER -> Color(0xFFD6DCE8)
     }
 }
 
@@ -389,7 +528,7 @@ private fun BudgetOperationsScreenPreview() {
                 accountId = 1,
                 title = "Salary",
                 amount = Money(
-                    amountMinor = 513556,
+                    amountMinor = 513556000000,
                     currency = CurrencyCode.PLN
                 ),
                 type = OperationType.INCOME,
