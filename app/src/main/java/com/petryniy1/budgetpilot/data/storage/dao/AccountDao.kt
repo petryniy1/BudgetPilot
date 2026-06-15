@@ -31,10 +31,10 @@ interface AccountDao {
     suspend fun insertAccount(account: AccountEntity)
 
     @Update
-    suspend fun updateAccount(account: AccountEntity)
+    suspend fun updateAccount(account: AccountEntity): Int
 
     @Query("DELETE FROM accounts WHERE id = :id")
-    suspend fun deleteAccount(id: Int)
+    suspend fun deleteAccount(id: Int): Int
 
     @Query(
         "UPDATE accounts " +
@@ -46,5 +46,17 @@ interface AccountDao {
         accountId: Int,
         balanceMinor: Long,
         currencyCode: String
+    ): Int
+
+    @Query("SELECT COUNT(*) > 0 FROM accounts WHERE name = :name")
+    suspend fun existsAccountWithName(name: String): Boolean
+
+    @Query(
+        "SELECT COUNT(*) > 0 FROM accounts " +
+                "WHERE name = :name AND id != :excludeId"
     )
+    suspend fun existsAccountWithNameExcludingId(
+        name: String,
+        excludeId: Int
+    ): Boolean
 }

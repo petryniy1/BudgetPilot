@@ -2,7 +2,7 @@ package com.petryniy1.budgetpilot.domain.repository
 
 import com.petryniy1.budgetpilot.domain.models.Account
 import com.petryniy1.budgetpilot.domain.models.BudgetOperation
-import com.petryniy1.budgetpilot.domain.models.results.OperationActionResult
+import com.petryniy1.budgetpilot.domain.results.OperationActionResult
 import kotlinx.coroutines.flow.Flow
 
 interface BudgetOperationRepository {

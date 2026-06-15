@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+
     <item
-        android:id="@+id/navigationMoneyHolderFragment"
+        android:id="@+id/navigationAccountsFragment"
         android:icon="@drawable/ic_credit_card"
-        android:title="Item accounts"
-        android:orderInCategory="1"/>
+        android:title="Accounts"
+        android:orderInCategory="1" />
 
     <item
         android:id="@+id/navigationOperationsFragment"
         android:icon="@drawable/ic_import_export"
-        android:title="Item operations"
-        android:orderInCategory="2"/>
+        android:title="Operations"
+        android:orderInCategory="2" />
 
     <item
-        android:id="@+id/navigationAnalyticFragment"
+        android:id="@+id/navigationAnalyticsFragment"
         android:icon="@drawable/ic_analytics"
-        android:title="Item analytics"
-        android:orderInCategory="3"/>
+        android:title="Analytics"
+        android:orderInCategory="3" />
 </menu>

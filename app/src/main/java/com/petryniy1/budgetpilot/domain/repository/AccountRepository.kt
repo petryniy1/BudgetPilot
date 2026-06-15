@@ -2,7 +2,7 @@ package com.petryniy1.budgetpilot.domain.repository
 
 import com.petryniy1.budgetpilot.domain.models.Account
 import com.petryniy1.budgetpilot.domain.models.Money
-import com.petryniy1.budgetpilot.domain.models.results.AccountActionResult
+import com.petryniy1.budgetpilot.domain.results.AccountActionResult
 import kotlinx.coroutines.flow.Flow
 
 interface AccountRepository {
@@ -21,4 +21,9 @@ interface AccountRepository {
     suspend fun deleteAccount(id: Int): AccountActionResult
 
     suspend fun updateBalance(accountId: Int, balance: Money): AccountActionResult
+
+    suspend fun existsAccountWithName(
+        name: String,
+        excludeId: Int? = null
+    ): Boolean
 }

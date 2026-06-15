@@ -7,12 +7,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.petryniy1.budgetpilot.data.storage.dao.AccountDao
 import com.petryniy1.budgetpilot.data.storage.dao.BudgetOperationDao
 import com.petryniy1.budgetpilot.data.storage.models.AccountEntity
-import com.petryniy1.budgetpilot.data.storage.models.OperationEntity
 import com.petryniy1.budgetpilot.data.storage.models.BudgetOperationEntity
 
 @Database(
     entities = [
-        OperationEntity::class,
         AccountEntity::class,
         BudgetOperationEntity::class
     ],
@@ -22,7 +20,7 @@ import com.petryniy1.budgetpilot.data.storage.models.BudgetOperationEntity
 
 abstract class AppDatabase : RoomDatabase() {
     companion object {
-        const val VERSION = 2
+        const val VERSION = 3
 
         val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(db: SupportSQLiteDatabase) {
@@ -50,11 +48,13 @@ abstract class AppDatabase : RoomDatabase() {
                 )
             }
         }
+
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("DROP TABLE IF EXISTS operations")
+            }
+        }
     }
-    abstract fun getOperationsDAO(): OperationsDAO
-
-    abstract fun getMoneyHolderDAO(): MoneyHolderDao
-
     abstract fun getAccountDao(): AccountDao
 
     abstract fun getBudgetOperationDao(): BudgetOperationDao

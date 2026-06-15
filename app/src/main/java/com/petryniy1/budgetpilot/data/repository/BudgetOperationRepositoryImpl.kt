@@ -9,7 +9,7 @@ import com.petryniy1.budgetpilot.data.storage.dao.AccountDao
 import com.petryniy1.budgetpilot.data.storage.dao.BudgetOperationDao
 import com.petryniy1.budgetpilot.domain.models.Account
 import com.petryniy1.budgetpilot.domain.models.BudgetOperation
-import com.petryniy1.budgetpilot.domain.models.results.OperationActionResult
+import com.petryniy1.budgetpilot.domain.results.OperationActionResult
 import com.petryniy1.budgetpilot.domain.repository.BudgetOperationRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
