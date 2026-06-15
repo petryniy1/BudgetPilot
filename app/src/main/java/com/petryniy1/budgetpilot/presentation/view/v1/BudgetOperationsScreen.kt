@@ -1,5 +1,6 @@
 package com.petryniy1.budgetpilot.presentation.view.v1
 
+import com.petryniy1.budgetpilot.domain.models.Account
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,14 +21,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,12 +41,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.petryniy1.budgetpilot.domain.models.AccountType
 import com.petryniy1.budgetpilot.domain.models.BudgetOperation
-import com.petryniy1.budgetpilot.domain.models.CurrencyCode
-import com.petryniy1.budgetpilot.domain.models.Money
 import com.petryniy1.budgetpilot.domain.models.OperationType
 import com.petryniy1.budgetpilot.presentation.design.BudgetPilotAmountShadow
 import com.petryniy1.budgetpilot.presentation.design.BudgetPilotMetaTextStyle
@@ -57,6 +54,7 @@ import com.petryniy1.budgetpilot.presentation.design.BudgetPilotTextPrimary
 import com.petryniy1.budgetpilot.presentation.design.BudgetPilotTextSecondary
 import com.petryniy1.budgetpilot.presentation.design.BudgetPilotTextShadow
 import com.petryniy1.budgetpilot.presentation.design.budgetPilotOutline
+import com.petryniy1.budgetpilot.presentation.design.components.BudgetPilotDialog
 import com.petryniy1.budgetpilot.presentation.design.components.GradientAddButton
 import com.petryniy1.budgetpilot.presentation.formatter.formatForDisplay
 import com.petryniy1.budgetpilot.presentation.formatter.formatForOperationDisplay
@@ -65,14 +63,11 @@ import com.petryniy1.budgetpilot.presentation.mapper.toOperationsSummaryUiModel
 import com.petryniy1.budgetpilot.presentation.uiModels.BudgetOperationListItemUiModel
 import com.petryniy1.budgetpilot.presentation.uiModels.OperationCurrencyTotalUiModel
 import com.petryniy1.budgetpilot.presentation.uiModels.OperationsSummaryUiModel
-import com.petryniy1.budgetpilot.presentation.uiState.OperationActionError
-import com.petryniy1.budgetpilot.presentation.uiState.OperationActionUiState
-import java.time.LocalDate
 
 @Composable
 fun BudgetOperationsScreen(
     operations: List<BudgetOperation>,
-    actionState: OperationActionUiState,
+    accounts: List<Account>,
     onAddOperationClick: () -> Unit,
     onOperationClick: (Int) -> Unit,
     onDeleteOperationClick: (Int) -> Unit
@@ -81,9 +76,9 @@ fun BudgetOperationsScreen(
         mutableStateOf<BudgetOperationListItemUiModel?>(null)
     }
 
-    val operationItems = remember(operations) {
+    val operationItems = remember(operations, accounts) {
         operations.map { operation ->
-            operation.toListItemUiModel()
+            operation.toListItemUiModel(accounts)
         }
     }
 
@@ -112,8 +107,6 @@ fun BudgetOperationsScreen(
             operationsCount = operationItems.size,
             onAddOperationClick = onAddOperationClick
         )
-
-        OperationActionMessage(actionState = actionState)
 
         Spacer(modifier = Modifier.height(2.dp))
 
@@ -424,7 +417,7 @@ private fun BudgetOperationItem(
             }
 
             Text(
-                text = operation.amount.formatForDisplay(),
+                text = operation.formatAmountForDisplay(),
                 modifier = Modifier.align(Alignment.BottomEnd),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
@@ -447,14 +440,38 @@ private fun OperationMetaInfo(
             append(" - ")
             append(operation.accountName)
             append(" - ")
-            append(operation.type.formatForDisplay())
+            append(operation.accountCurrencyCode)
             append(" - ")
-            append(operation.date.formatForOperationDisplay())
+            append(operation.accountType.toDisplayText())
+            append(" - ")
+            append(operation.type.formatForDisplay())
         },
         fontSize = 12.sp,
         color = BudgetPilotTextSecondary,
         style = BudgetPilotMetaTextStyle
     )
+}
+
+@Composable
+private fun DeleteOperationDialog(
+    operation: BudgetOperationListItemUiModel,
+    onConfirm: (Int) -> Unit,
+    onDismiss: () -> Unit
+) {
+    BudgetPilotDialog(
+        title = "Delete operation",
+        confirmText = "Delete",
+        onConfirm = {
+            onConfirm(operation.id)
+        },
+        onDismiss = onDismiss,
+        isDestructive = true
+    ) {
+        Text(
+            text = "Are you sure you want to delete ${operation.title}?",
+            color = BudgetPilotTextSecondary
+        )
+    }
 }
 
 private fun OperationType.amountColor(): Color {
@@ -465,89 +482,19 @@ private fun OperationType.amountColor(): Color {
     }
 }
 
-@Composable
-private fun DeleteOperationDialog(
-    operation: BudgetOperationListItemUiModel,
-    onConfirm: (Int) -> Unit,
-    onDismiss: () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(text = "Delete operation") },
-        text = { Text(text = "Are you sure you want to delete ${operation.title}?") },
-        confirmButton = {
-            TextButton(
-                onClick = { onConfirm(operation.id) }
-            ) {
-                Text(text = "Delete")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(text = "Cancel")
-            }
-        }
-    )
-}
-
-@Composable
-private fun OperationActionMessage(
-    actionState: OperationActionUiState
-) {
-    when (actionState) {
-        OperationActionUiState.Ready -> Unit
-        OperationActionUiState.Loading -> Text("Loading...")
-        OperationActionUiState.Success -> Text("Operation saved")
-        is OperationActionUiState.Error -> Text(actionState.reason.toMessage())
-    }
-}
-
-private fun OperationActionError.toMessage(): String {
+private fun AccountType.toDisplayText(): String {
     return when (this) {
-        OperationActionError.AccountNotFound -> "Account not found"
-        OperationActionError.InsufficientFunds -> "Insufficient funds"
-        OperationActionError.CurrencyMismatch -> "Currency mismatch"
-        OperationActionError.DuplicateOperation -> "Duplicate operation"
-        OperationActionError.OperationNotFound -> "Operation not found"
-        OperationActionError.InvalidData -> "Invalid operation data"
-        OperationActionError.Unexpected -> "Unexpected error"
+        AccountType.CASH -> "Cash"
+        AccountType.BANK_ACCOUNT -> "Bank account"
     }
 }
 
+private fun BudgetOperationListItemUiModel.formatAmountForDisplay(): String {
+    val sign = when (type) {
+        OperationType.EXPENSE -> "-"
+        OperationType.INCOME -> ""
+        OperationType.TRANSFER -> ""
+    }
 
-@Preview(showBackground = true)
-@Composable
-private fun BudgetOperationsScreenPreview() {
-    BudgetOperationsScreen(
-        operations = listOf(
-            BudgetOperation(
-                id = 1,
-                accountId = 1,
-                title = "Biedronka",
-                amount = Money(
-                    amountMinor = -1256,
-                    currency = CurrencyCode.PLN
-                ),
-                type = OperationType.EXPENSE,
-                date = LocalDate.of(2026, 6, 9),
-                comment = "Groceries"
-            ),
-            BudgetOperation(
-                id = 2,
-                accountId = 1,
-                title = "Salary",
-                amount = Money(
-                    amountMinor = 513556000000,
-                    currency = CurrencyCode.PLN
-                ),
-                type = OperationType.INCOME,
-                date = LocalDate.of(2026, 6, 8),
-                comment = "Monthly salary"
-            )
-        ),
-        actionState = OperationActionUiState.Ready,
-        onAddOperationClick = {},
-        onOperationClick = {},
-        onDeleteOperationClick = {}
-    )
+    return "$sign${amount.formatForDisplay()}"
 }

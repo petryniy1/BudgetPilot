@@ -13,6 +13,7 @@ data class BudgetOperationListItemUiModel(
     @param:DrawableRes
     val categoryIconRes: Int,
     val accountName: String,
+    val accountCurrencyCode: String,
     val accountType: AccountType,
     val amount: Money,
     val type: OperationType,

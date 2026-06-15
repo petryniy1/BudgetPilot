@@ -1,13 +1,29 @@
 package com.petryniy1.budgetpilot.presentation.view.v1
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.petryniy1.budgetpilot.presentation.design.components.BudgetPilotSnackbar
+import com.petryniy1.budgetpilot.presentation.mapper.toBudgetOperationOrNull
+import com.petryniy1.budgetpilot.presentation.mapper.toEditorUiState
+import com.petryniy1.budgetpilot.presentation.mapper.withValidationErrors
 import com.petryniy1.budgetpilot.presentation.uiState.BudgetOperationEditorUiState
+import com.petryniy1.budgetpilot.presentation.uiState.OperationActionError
+import com.petryniy1.budgetpilot.presentation.uiState.OperationActionUiState
 import com.petryniy1.budgetpilot.presentation.viewModels.v1.BudgetOperationsViewModel
 
 @Composable
@@ -22,28 +38,70 @@ fun BudgetOperationsRoute(
         mutableStateOf<BudgetOperationEditorUiState?>(null)
     }
 
+    val snackbarHostState = remember {
+        SnackbarHostState()
+    }
+
     fun updateEditorState(
         transform: (BudgetOperationEditorUiState) -> BudgetOperationEditorUiState
     ) {
         editorState = editorState?.let(transform)
     }
 
-    BudgetOperationsScreen(
-        operations = operations.value,
-        actionState = actionState.value,
-        onAddOperationClick = {
-            editorState = BudgetOperationEditorUiState(
-                availableAccounts = accounts.value,
-                selectedAccountId = accounts.value.firstOrNull()?.id
-            )
-        },
-        onOperationClick = { _ ->
-            // TODO Open operation details screen.
-        },
-        onDeleteOperationClick = { operationId ->
-            viewModel.deleteOperation(operationId)
+    LaunchedEffect(actionState.value) {
+        when (val state = actionState.value) {
+            OperationActionUiState.Success -> {
+                snackbarHostState.showSnackbar("Operation saved")
+                viewModel.clearOperationActionState()
+            }
+
+            is OperationActionUiState.Error -> {
+                snackbarHostState.showSnackbar(state.reason.toMessage())
+                viewModel.clearOperationActionState()
+            }
+
+            OperationActionUiState.Ready,
+            OperationActionUiState.Loading -> Unit
         }
-    )
+    }
+
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        BudgetOperationsScreen(
+            operations = operations.value,
+            accounts = accounts.value,
+            onAddOperationClick = {
+                editorState = BudgetOperationEditorUiState(
+                    availableAccounts = accounts.value,
+                    selectedAccountId = accounts.value.firstOrNull()?.id
+                )
+            },
+            onOperationClick = { operationId ->
+                val operation = operations.value.firstOrNull { operation ->
+                    operation.id == operationId
+                } ?: return@BudgetOperationsScreen
+
+                editorState = operation.toEditorUiState(
+                    availableAccounts = accounts.value
+                )
+            },
+            onDeleteOperationClick = { operationId ->
+                viewModel.deleteOperation(operationId)
+            }
+        )
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .offset(y = 120.dp)
+                .padding(horizontal = 24.dp),
+            snackbar = { snackbarData ->
+                BudgetPilotSnackbar(snackbarData = snackbarData)
+            }
+        )
+    }
 
     editorState?.let { state ->
         BudgetOperationEditorDialog(
@@ -79,6 +137,13 @@ fun BudgetOperationsRoute(
                     )
                 }
             },
+            onDateChange = { date ->
+                updateEditorState { current ->
+                    current.copy(
+                        selectedDate = date
+                    )
+                }
+            },
             onCommentChange = { comment ->
                 updateEditorState { current ->
                     current.copy(
@@ -87,11 +152,37 @@ fun BudgetOperationsRoute(
                 }
             },
             onSave = {
-                // TODO Convert editor state to BudgetOperation and save.
+                val currentState = editorState ?: return@BudgetOperationEditorDialog
+                val validatedState = currentState.withValidationErrors()
+
+                editorState = validatedState
+
+                val operation = validatedState.toBudgetOperationOrNull()
+                    ?: return@BudgetOperationEditorDialog
+
+                if (validatedState.operationId == null) {
+                    viewModel.addOperation(operation)
+                } else {
+                    viewModel.updateOperation(operation)
+                }
+
+                editorState = null
             },
             onDismiss = {
                 editorState = null
             }
         )
+    }
+}
+
+private fun OperationActionError.toMessage(): String {
+    return when (this) {
+        OperationActionError.AccountNotFound -> "Account not found"
+        OperationActionError.InsufficientFunds -> "Insufficient funds"
+        OperationActionError.CurrencyMismatch -> "Currency mismatch"
+        OperationActionError.DuplicateOperation -> "Duplicate operation"
+        OperationActionError.OperationNotFound -> "Operation not found"
+        OperationActionError.InvalidData -> "Invalid operation data"
+        OperationActionError.Unexpected -> "Unexpected error"
     }
 }

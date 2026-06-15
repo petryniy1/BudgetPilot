@@ -4,25 +4,43 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.petryniy1.budgetpilot.domain.models.Account
+import com.petryniy1.budgetpilot.domain.models.AccountType
 import com.petryniy1.budgetpilot.domain.models.OperationType
 import com.petryniy1.budgetpilot.presentation.design.BudgetPilotAccentBlue
 import com.petryniy1.budgetpilot.presentation.design.BudgetPilotCurrencyFrameOverlay
 import com.petryniy1.budgetpilot.presentation.design.BudgetPilotError
 import com.petryniy1.budgetpilot.presentation.design.BudgetPilotTextPrimary
 import com.petryniy1.budgetpilot.presentation.design.BudgetPilotTextSecondary
+import com.petryniy1.budgetpilot.presentation.design.components.BudgetPilotDateField
 import com.petryniy1.budgetpilot.presentation.design.components.BudgetPilotDialog
 import com.petryniy1.budgetpilot.presentation.design.components.BudgetPilotTextField
 import com.petryniy1.budgetpilot.presentation.uiState.BudgetOperationEditorUiState
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BudgetOperationEditorDialog(
     state: BudgetOperationEditorUiState,
@@ -30,10 +48,15 @@ fun BudgetOperationEditorDialog(
     onAmountChange: (String) -> Unit,
     onAccountChange: (Int) -> Unit,
     onTypeChange: (OperationType) -> Unit,
+    onDateChange: (LocalDate) -> Unit,
     onCommentChange: (String) -> Unit,
     onSave: () -> Unit,
     onDismiss: () -> Unit
 ) {
+    var showDatePicker by remember {
+        mutableStateOf(false)
+    }
+
     BudgetPilotDialog(
         title = if (state.operationId == null) {
             "Add operation"
@@ -106,12 +129,13 @@ fun BudgetOperationEditorDialog(
                 }
             }
 
-            BudgetPilotTextField(
+            BudgetPilotDateField(
                 value = state.selectedDate.format(OperationDateFormatter),
-                onValueChange = {},
                 label = "Date",
-                modifier = Modifier.fillMaxWidth(),
-                enabled = false
+                onClick = {
+                    showDatePicker = true
+                },
+                modifier = Modifier.fillMaxWidth()
             )
 
             BudgetPilotTextField(
@@ -119,6 +143,70 @@ fun BudgetOperationEditorDialog(
                 onValueChange = onCommentChange,
                 label = "Comment",
                 modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+
+    if (showDatePicker) {
+        val datePickerState = rememberDatePickerState(
+            initialSelectedDateMillis = state.selectedDate.toUtcMillis()
+        )
+
+        DatePickerDialog(
+            onDismissRequest = {
+                showDatePicker = false
+            },
+            colors = DatePickerDefaults.colors(
+                containerColor = Color(0xFF071129)
+            ),
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        datePickerState.selectedDateMillis?.let { selectedDateMillis ->
+                            onDateChange(selectedDateMillis.toLocalDateFromUtcMillis())
+                        }
+                        showDatePicker = false
+                    }
+                ) {
+                    Text(
+                        text = "Confirm",
+                        color = BudgetPilotAccentBlue
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showDatePicker = false
+                    }
+                ) {
+                    Text(
+                        text = "Cancel",
+                        color = BudgetPilotTextSecondary
+                    )
+                }
+            }
+        ) {
+            DatePicker(
+                state = datePickerState,
+                colors = DatePickerDefaults.colors(
+                    containerColor = Color(0xFF071129),
+                    titleContentColor = BudgetPilotTextPrimary,
+                    headlineContentColor = BudgetPilotTextPrimary,
+                    weekdayContentColor = BudgetPilotTextSecondary,
+                    subheadContentColor = BudgetPilotTextSecondary,
+                    yearContentColor = BudgetPilotTextSecondary,
+                    currentYearContentColor = BudgetPilotAccentBlue,
+                    selectedYearContainerColor = BudgetPilotAccentBlue,
+                    selectedYearContentColor = Color.White,
+                    dayContentColor = BudgetPilotTextPrimary,
+                    disabledDayContentColor = BudgetPilotTextSecondary.copy(alpha = 0.35f),
+                    selectedDayContainerColor = BudgetPilotAccentBlue,
+                    selectedDayContentColor = Color.White,
+                    todayContentColor = BudgetPilotAccentBlue,
+                    todayDateBorderColor = BudgetPilotAccentBlue,
+                    navigationContentColor = BudgetPilotTextPrimary
+                )
             )
         }
     }
@@ -144,7 +232,14 @@ private fun AccountSelectorChip(
         selected = selected,
         onClick = onClick,
         label = {
-            Text(text = account.name)
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Text(text = account.name)
+                Text(
+                    text = "${account.type.toDisplayLabel()} • ${account.balance.currency.name}",
+                    fontSize = 11.sp,
+                    color = BudgetPilotTextSecondary
+                )
+            }
         },
         colors = budgetPilotChipColors()
     )
@@ -182,6 +277,23 @@ private fun OperationType.toEditorLabel(): String {
         }
 }
 
+private fun AccountType.toDisplayLabel(): String = when (this) {
+    AccountType.CASH -> "Cash"
+    AccountType.BANK_ACCOUNT -> "Bank account"
+}
+
 private val OperationDateFormatter: DateTimeFormatter =
     DateTimeFormatter.ofPattern("dd.MM.yyyy")
+
+private fun LocalDate.toUtcMillis(): Long {
+    return atStartOfDay(ZoneOffset.UTC)
+        .toInstant()
+        .toEpochMilli()
+}
+
+private fun Long.toLocalDateFromUtcMillis(): LocalDate {
+    return Instant.ofEpochMilli(this)
+        .atZone(ZoneOffset.UTC)
+        .toLocalDate()
+}
 
