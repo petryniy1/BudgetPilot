@@ -8,8 +8,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import com.petryniy1.budgetpilot.data.storage.AppDatabase
-import com.petryniy1.budgetpilot.data.storage.MoneyHolderDao
-import com.petryniy1.budgetpilot.data.storage.OperationsDAO
 import com.petryniy1.budgetpilot.data.storage.dao.AccountDao
 import com.petryniy1.budgetpilot.data.storage.dao.BudgetOperationDao
 import javax.inject.Singleton
@@ -25,18 +23,11 @@ class DataModule {
             appContext,
             AppDatabase::class.java, "USERDATA"
         )
-            .addMigrations(AppDatabase.MIGRATION_1_2)
+            .addMigrations(
+                AppDatabase.MIGRATION_1_2,
+                AppDatabase.MIGRATION_2_3
+            )
             .build()
-
-    @Singleton
-    @Provides
-    fun provideOperationsDao(appDatabase: AppDatabase): OperationsDAO =
-        appDatabase.getOperationsDAO()
-
-    @Singleton
-    @Provides
-    fun provideMoneyHolderDao(appDatabase: AppDatabase): MoneyHolderDao =
-        appDatabase.getMoneyHolderDAO()
 
     @Singleton
     @Provides

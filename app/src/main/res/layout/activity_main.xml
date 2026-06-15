@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#050B1C"
     android:orientation="vertical"
-    tools:context=".presentation.view.MainActivity">
+    tools:context=".presentation.main.MainActivity">
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_container"
@@ -18,7 +18,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         app:defaultNavHost="true"
-        app:navGraph="@navigation/main_graph_v1" />
+        app:navGraph="@navigation/main_graph" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav_menu"
