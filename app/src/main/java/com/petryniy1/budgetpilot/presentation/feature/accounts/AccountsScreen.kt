@@ -279,9 +279,10 @@ private fun EmptyAccountsState() {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "No accounts yet",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.SemiBold,
+            text = "No operations yet",
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            fontStyle = FontStyle.Italic,
             color = Color(0xFF6D5A78)
         )
     }

@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="budget_pilot_launch_background">#050B1C</color>
+    <color name="budget_pilot_dark_blue">#002967</color>
+    <color name="budget_pilot_launch_icon_background">#083B87</color>
+    <color name="budget_pilot_accent_blue">#3DBDFF</color>
+
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#8A7C00</color>
     <color name="purple_700">#FF3700B3</color>
