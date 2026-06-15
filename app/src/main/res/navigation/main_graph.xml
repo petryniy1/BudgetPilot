@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_graph"
+    app:startDestination="@id/navigationOperationsFragment">
+
+    <navigation
+        android:id="@+id/navigationAccountsFragment"
+        app:startDestination="@id/accountsFragment">
+
+        <fragment
+            android:id="@+id/accountsFragment"
+            android:name="com.petryniy1.budgetpilot.presentation.feature.accounts.AccountsFragment"
+            android:label="Accounts" />
+    </navigation>
+
+    <navigation
+        android:id="@+id/navigationOperationsFragment"
+        app:startDestination="@id/budgetOperationsFragment">
+
+        <fragment
+            android:id="@+id/budgetOperationsFragment"
+            android:name="com.petryniy1.budgetpilot.presentation.feature.operations.BudgetOperationsFragment"
+            android:label="Operations" />
+    </navigation>
+
+    <navigation
+        android:id="@+id/navigationAnalyticsFragment"
+        app:startDestination="@id/analyticsFragment">
+
+        <fragment
+            android:id="@+id/analyticsFragment"
+            android:name="com.petryniy1.budgetpilot.presentation.feature.analytics.AnalyticsFragment"
+            android:label="Analytics" />
+    </navigation>
+
+</navigation>
