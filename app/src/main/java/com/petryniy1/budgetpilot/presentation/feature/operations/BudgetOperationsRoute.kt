@@ -11,6 +11,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,6 +23,7 @@ import com.petryniy1.budgetpilot.presentation.mapper.toBudgetOperationOrNull
 import com.petryniy1.budgetpilot.presentation.mapper.toEditorUiState
 import com.petryniy1.budgetpilot.presentation.mapper.withValidationErrors
 import com.petryniy1.budgetpilot.presentation.uiState.BudgetOperationEditorUiState
+import com.petryniy1.budgetpilot.presentation.uiState.BudgetOperationEditorUiStateSaver
 import com.petryniy1.budgetpilot.presentation.uiState.OperationActionError
 import com.petryniy1.budgetpilot.presentation.uiState.OperationActionUiState
 
@@ -33,7 +35,9 @@ fun BudgetOperationsRoute(
     val accounts = viewModel.accounts.collectAsStateWithLifecycle()
     val actionState = viewModel.operationActionState.collectAsStateWithLifecycle()
 
-    var editorState by remember {
+    var editorState by rememberSaveable(
+        stateSaver = BudgetOperationEditorUiStateSaver
+    ) {
         mutableStateOf<BudgetOperationEditorUiState?>(null)
     }
 
@@ -102,7 +106,11 @@ fun BudgetOperationsRoute(
         )
     }
 
-    editorState?.let { state ->
+    val editorStateWithAccounts = editorState?.copy(
+        availableAccounts = accounts.value
+    )
+
+    editorStateWithAccounts?.let { state ->
         BudgetOperationEditorDialog(
             state = state,
             onTitleChange = { title ->
@@ -151,7 +159,7 @@ fun BudgetOperationsRoute(
                 }
             },
             onSave = {
-                val currentState = editorState ?: return@BudgetOperationEditorDialog
+                val currentState = editorStateWithAccounts ?: return@BudgetOperationEditorDialog
                 val validatedState = currentState.withValidationErrors()
 
                 editorState = validatedState

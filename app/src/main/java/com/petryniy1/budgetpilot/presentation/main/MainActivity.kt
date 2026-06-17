@@ -16,28 +16,33 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
-        
+
         super.onCreate(savedInstanceState)
 
-        initBottomMenu()
+        initBottomMenu(savedInstanceState)
     }
 
-    private fun initBottomMenu() {
+    private fun initBottomMenu(savedInstanceState: Bundle?) {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
 
         val navController = navHostFragment.navController
-        val navGraph = navController.navInflater.inflate(R.navigation.main_graph)
-
-        if (OnboardingPreferences(this).isCompleted()) {
-            navGraph.setStartDestination(R.id.navigationOperationsFragment)
-        }
-
-        navController.graph = navGraph
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_nav_menu)
 
+        if (savedInstanceState == null) {
+            val navGraph = navController.navInflater.inflate(R.navigation.main_graph)
+
+            if (OnboardingPreferences(this).isCompleted()) {
+                navGraph.setStartDestination(R.id.navigationAccountsFragment)
+            }
+
+            navController.graph = navGraph
+        }
+
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            bottomNavigationView.isVisible = destination.id != R.id.onboardingFragment
+            bottomNavigationView.isVisible =
+                destination.id != R.id.onboardingFragment &&
+                        destination.id != R.id.guidedTutorialFragment
         }
 
         bottomNavigationView.setupWithNavController(navController)

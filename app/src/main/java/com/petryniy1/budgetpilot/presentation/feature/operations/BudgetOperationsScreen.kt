@@ -28,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -72,8 +73,8 @@ fun BudgetOperationsScreen(
     onOperationClick: (Int) -> Unit,
     onDeleteOperationClick: (Int) -> Unit
 ) {
-    var operationPendingDelete by remember {
-        mutableStateOf<BudgetOperationListItemUiModel?>(null)
+    var operationPendingDeleteId by rememberSaveable {
+        mutableStateOf<Int?>(null)
     }
 
     val operationItems = remember(operations, accounts) {
@@ -82,14 +83,20 @@ fun BudgetOperationsScreen(
         }
     }
 
+    val operationPendingDelete = operationPendingDeleteId?.let { operationId ->
+        operationItems.firstOrNull { operation ->
+            operation.id == operationId
+        }
+    }
+
     operationPendingDelete?.let { operation ->
         DeleteOperationDialog(
             operation = operation,
             onConfirm = { operationId ->
-                operationPendingDelete = null
+                operationPendingDeleteId = null
                 onDeleteOperationClick(operationId)
             },
-            onDismiss = { operationPendingDelete = null }
+            onDismiss = { operationPendingDeleteId = null }
         )
     }
 
@@ -101,7 +108,7 @@ fun BudgetOperationsScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(BudgetPilotScreenGradient)
-            .padding(12.dp)
+            .padding(16.dp)
     ) {
         BudgetOperationsHeader(
             operationsCount = operationItems.size,
@@ -115,7 +122,7 @@ fun BudgetOperationsScreen(
             operationItems = operationItems,
             onOperationClick = onOperationClick,
             onDeleteOperationClick = { operation ->
-                operationPendingDelete = operation
+                operationPendingDeleteId = operation.id
             }
         )
     }
@@ -306,7 +313,7 @@ private fun BudgetOperationItem(
     onClick: (BudgetOperationListItemUiModel) -> Unit,
     onDeleteClick: (BudgetOperationListItemUiModel) -> Unit
 ) {
-    var menuExpanded by remember { mutableStateOf(false) }
+    var menuExpanded by rememberSaveable { mutableStateOf(false) }
 
     Card(
         modifier = Modifier

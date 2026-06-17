@@ -9,6 +9,11 @@
         android:name="com.petryniy1.budgetpilot.presentation.feature.onboarding.OnboardingFragment"
         android:label="Welcome" />
 
+    <fragment
+        android:id="@+id/guidedTutorialFragment"
+        android:name="com.petryniy1.budgetpilot.presentation.feature.tutorial.GuidedTutorialFragment"
+        android:label="Tutorial" />
+
     <navigation
         android:id="@+id/navigationAccountsFragment"
         app:startDestination="@id/accountsFragment">

@@ -1,6 +1,7 @@
 package com.petryniy1.budgetpilot.presentation.feature.onboarding
 
 import android.content.Context
+import androidx.core.content.edit
 
 class OnboardingPreferences(
     context: Context
@@ -15,9 +16,9 @@ class OnboardingPreferences(
     }
 
     fun markCompleted() {
-        preferences.edit()
-            .putBoolean(KEY_ONBOARDING_COMPLETED, true)
-            .apply()
+        preferences.edit {
+            putBoolean(KEY_ONBOARDING_COMPLETED, true)
+        }
     }
 
     companion object {

@@ -16,9 +16,9 @@ import androidx.compose.ui.unit.sp
 
 val BudgetPilotScreenGradient = Brush.verticalGradient(
     colors = listOf(
-        Color(0xFF0B1220),
+        Color(0xFF030407),
         Color(0xFF002967),
-        Color(0xFF0B1220)
+        Color(0xFF030407)
     )
 )
 val BudgetPilotAccentButtonGradient = Brush.horizontalGradient(

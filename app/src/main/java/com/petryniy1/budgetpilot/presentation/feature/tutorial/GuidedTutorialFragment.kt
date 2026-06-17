@@ -1,4 +1,4 @@
-package com.petryniy1.budgetpilot.presentation.feature.onboarding
+package com.petryniy1.budgetpilot.presentation.feature.tutorial
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,8 +10,9 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 import com.petryniy1.budgetpilot.R
+import com.petryniy1.budgetpilot.presentation.feature.onboarding.OnboardingPreferences
 
-class OnboardingFragment : Fragment() {
+class GuidedTutorialFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -24,13 +25,15 @@ class OnboardingFragment : Fragment() {
             )
 
             setContent {
-                OnboardingScreen(
+                GuidedTutorialScreen(
                     onFinish = {
+                        OnboardingPreferences(requireContext()).markCompleted()
+
                         findNavController().navigate(
-                            R.id.guidedTutorialFragment,
+                            R.id.navigationAccountsFragment,
                             null,
                             navOptions {
-                                popUpTo(R.id.onboardingFragment) {
+                                popUpTo(R.id.guidedTutorialFragment) {
                                     inclusive = true
                                 }
                             }

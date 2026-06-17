@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,18 +62,24 @@ fun AccountsScreen(
     onAccountClick: (Int) -> Unit,
     onDeleteAccountClick: (Int) -> Unit
 ) {
-    var accountPendingDelete by remember {
-        mutableStateOf<Account?>(null)
+    var accountPendingDeleteId by rememberSaveable {
+        mutableStateOf<Int?>(null)
+    }
+
+    val accountPendingDelete = accountPendingDeleteId?.let { accountId ->
+        accounts.firstOrNull { account ->
+            account.id == accountId
+        }
     }
 
     accountPendingDelete?.let { account ->
         DeleteAccountDialog(
             account = account,
             onConfirm = { accountId ->
-                accountPendingDelete = null
+                accountPendingDeleteId = null
                 onDeleteAccountClick(accountId)
             },
-            onDismiss = { accountPendingDelete = null }
+            onDismiss = { accountPendingDeleteId = null }
         )
     }
 
@@ -98,7 +105,7 @@ fun AccountsScreen(
             currencyGroups = currencyGroups,
             onAccountClick = onAccountClick,
             onDeleteAccountClick = { account ->
-                accountPendingDelete = account
+                accountPendingDeleteId = account.id
             }
         )
     }
@@ -294,7 +301,7 @@ private fun AccountItem(
     onClick: (Account) -> Unit,
     onDeleteClick: (Account) -> Unit
 ) {
-    var menuExpanded by remember { mutableStateOf(false) }
+    var menuExpanded by rememberSaveable { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
