@@ -38,7 +38,6 @@ class BasicAccountBalanceCalculator :
 
         val accountAfterRollback = account.copy(balance = balanceAfterRollback)
 
-
         return calculateAfterOperation(
             account = accountAfterRollback,
             operation = newOperation

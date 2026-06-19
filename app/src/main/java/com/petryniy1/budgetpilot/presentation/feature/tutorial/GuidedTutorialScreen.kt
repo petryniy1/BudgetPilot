@@ -1,12 +1,12 @@
 package com.petryniy1.budgetpilot.presentation.feature.tutorial
 
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -15,31 +15,43 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.petryniy1.budgetpilot.R
 import com.petryniy1.budgetpilot.presentation.design.BudgetPilotAccentBlue
 import com.petryniy1.budgetpilot.presentation.design.BudgetPilotAmountNeutral
 import com.petryniy1.budgetpilot.presentation.design.BudgetPilotMetaTextStyle
@@ -88,6 +100,271 @@ fun GuidedTutorialScreen(
                     currentStepIndex += 1
                 }
             }
+        )
+    }
+}
+
+@Composable
+fun GuidedTutorialFocusCalibrationScreen() {
+    var currentStepIndex by remember {
+        mutableIntStateOf(0)
+    }
+    val adjustments = remember {
+        mutableStateMapOf<TutorialTarget, TutorialFocusAdjustment>().apply {
+            putAll(TutorialFocusAdjustments)
+        }
+    }
+
+    val currentStep = TutorialSteps[currentStepIndex]
+    val currentAdjustment = adjustments[currentStep.target]
+        ?: TutorialFocusAdjustment()
+
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF020714))
+    ) {
+        Box(
+            modifier = Modifier
+                .width(TutorialCalibrationPhoneWidth)
+                .fillMaxHeight()
+                .background(BudgetPilotScreenGradient)
+        ) {
+            TutorialMockApp(scene = currentStep.scene)
+
+            if (currentStep.target != TutorialTarget.Finish) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .graphicsLayer {
+                            compositingStrategy = CompositingStrategy.Offscreen
+                        }
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color(0xB3020714))
+                    )
+
+                    TutorialFocusFrame(
+                        target = currentStep.target,
+                        adjustment = currentAdjustment
+                    )
+                }
+            }
+        }
+
+        TutorialCalibrationControls(
+            stepIndex = currentStepIndex,
+            stepsCount = TutorialSteps.size,
+            title = currentStep.title,
+            target = currentStep.target,
+            adjustment = currentAdjustment,
+            onPreviousStep = {
+                if (currentStepIndex > 0) {
+                    currentStepIndex -= 1
+                }
+            },
+            onNextStep = {
+                if (currentStepIndex < TutorialSteps.lastIndex) {
+                    currentStepIndex += 1
+                }
+            },
+            onAdjustmentChange = { adjustment ->
+                adjustments[currentStep.target] = adjustment
+            }
+        )
+    }
+}
+
+@Composable
+private fun TutorialCalibrationControls(
+    stepIndex: Int,
+    stepsCount: Int,
+    title: String,
+    target: TutorialTarget,
+    adjustment: TutorialFocusAdjustment,
+    onPreviousStep: () -> Unit,
+    onNextStep: () -> Unit,
+    onAdjustmentChange: (TutorialFocusAdjustment) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxHeight()
+            .width(190.dp)
+            .background(Color(0xFF071129))
+            .padding(10.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text(
+            text = "Focus calibration",
+            color = BudgetPilotTextPrimary,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold
+        )
+
+        Text(
+            text = "Step ${stepIndex + 1}/$stepsCount\n$title\n${target.name}",
+            color = BudgetPilotAccentBlue,
+            fontSize = 13.sp,
+            fontWeight = FontWeight.Bold
+        )
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            TutorialCalibrationButton(
+                text = "Prev",
+                onClick = onPreviousStep
+            )
+            TutorialCalibrationButton(
+                text = "Next",
+                onClick = onNextStep
+            )
+        }
+
+        Text(
+            text = "Position",
+            color = BudgetPilotTextPrimary,
+            fontWeight = FontWeight.Bold
+        )
+
+        TutorialCalibrationButton(
+            text = "Up 4dp",
+            onClick = {
+                onAdjustmentChange(
+                    adjustment.copy(offsetY = adjustment.offsetY - 4.dp)
+                )
+            }
+        )
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            TutorialCalibrationButton(
+                text = "Left",
+                onClick = {
+                    onAdjustmentChange(
+                        adjustment.copy(offsetX = adjustment.offsetX - 4.dp)
+                    )
+                }
+            )
+            TutorialCalibrationButton(
+                text = "Right",
+                onClick = {
+                    onAdjustmentChange(
+                        adjustment.copy(offsetX = adjustment.offsetX + 4.dp)
+                    )
+                }
+            )
+        }
+
+        TutorialCalibrationButton(
+            text = "Down 4dp",
+            onClick = {
+                onAdjustmentChange(
+                    adjustment.copy(offsetY = adjustment.offsetY + 4.dp)
+                )
+            }
+        )
+
+        Text(
+            text = "Size",
+            color = BudgetPilotTextPrimary,
+            fontWeight = FontWeight.Bold
+        )
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            TutorialCalibrationButton(
+                text = "W−",
+                onClick = {
+                    onAdjustmentChange(
+                        adjustment.copy(
+                            scaleX = (adjustment.scaleX - 0.05f)
+                                .coerceAtLeast(0.5f)
+                        )
+                    )
+                }
+            )
+            TutorialCalibrationButton(
+                text = "W+",
+                onClick = {
+                    onAdjustmentChange(
+                        adjustment.copy(scaleX = adjustment.scaleX + 0.05f)
+                    )
+                }
+            )
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            TutorialCalibrationButton(
+                text = "H−",
+                onClick = {
+                    onAdjustmentChange(
+                        adjustment.copy(
+                            scaleY = (adjustment.scaleY - 0.05f)
+                                .coerceAtLeast(0.5f)
+                        )
+                    )
+                }
+            )
+            TutorialCalibrationButton(
+                text = "H+",
+                onClick = {
+                    onAdjustmentChange(
+                        adjustment.copy(scaleY = adjustment.scaleY + 0.05f)
+                    )
+                }
+            )
+        }
+
+        TutorialCalibrationButton(
+            text = "Reset",
+            onClick = {
+                onAdjustmentChange(
+                    TutorialFocusAdjustments[target]
+                        ?: TutorialFocusAdjustment()
+                )
+            }
+        )
+
+        Text(
+            text = buildString {
+                appendLine("Copy values:")
+                appendLine(target.name)
+                appendLine("x = ${adjustment.offsetX.value}dp")
+                appendLine("y = ${adjustment.offsetY.value}dp")
+                appendLine("scaleX = ${adjustment.scaleX}")
+                append("scaleY = ${adjustment.scaleY}")
+            },
+            color = BudgetPilotTextSecondary,
+            fontSize = 11.sp,
+            lineHeight = 15.sp
+        )
+    }
+}
+
+@Composable
+private fun TutorialCalibrationButton(
+    text: String,
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = onClick,
+        contentPadding = ButtonDefaults.ContentPadding,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(0xFF123B70),
+            contentColor = Color.White
+        )
+    ) {
+        Text(
+            text = text,
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Bold
         )
     }
 }
@@ -282,13 +559,6 @@ private fun ColumnScope.TutorialOperationsContent(
         Spacer(modifier = Modifier.height(20.dp))
 
         TutorialOperationCard(
-            title = if (scene == TutorialScene.OperationsEditMenu) {
-                "Lidl products"
-            } else {
-                "Lidl products"
-            },
-            meta = "Groceries · BNP Paribas · Expense",
-            amount = "-84.90 USD",
             showMenu = scene == TutorialScene.OperationsEditMenu
         )
     }
@@ -422,9 +692,6 @@ private fun TutorialCurrencyCard(
 
 @Composable
 private fun TutorialOperationCard(
-    title: String,
-    meta: String,
-    amount: String,
     showMenu: Boolean
 ) {
     Box(
@@ -446,14 +713,14 @@ private fun TutorialOperationCard(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = title,
+                    text = "Lidl products",
                     color = BudgetPilotTextPrimary,
                     fontSize = 17.sp,
                     fontWeight = FontWeight.Bold
                 )
 
                 Text(
-                    text = meta,
+                    text = "Groceries · BNP Paribas · Expense",
                     style = BudgetPilotMetaTextStyle
                 )
 
@@ -464,7 +731,7 @@ private fun TutorialOperationCard(
             }
 
             Text(
-                text = amount,
+                text = "-84.90 USD",
                 color = Color(0xFFFF2F4F),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
@@ -572,15 +839,15 @@ private fun TutorialBottomNavigation(
         verticalAlignment = Alignment.CenterVertically
     ) {
         TutorialNavItem(
-            label = "Accounts",
+            tab = TutorialTab.Accounts,
             selected = selectedTab == TutorialTab.Accounts
         )
         TutorialNavItem(
-            label = "Operations",
+            tab = TutorialTab.Operations,
             selected = selectedTab == TutorialTab.Operations
         )
         TutorialNavItem(
-            label = "Analytics",
+            tab = TutorialTab.Analytics,
             selected = selectedTab == TutorialTab.Analytics
         )
     }
@@ -588,36 +855,30 @@ private fun TutorialBottomNavigation(
 
 @Composable
 private fun TutorialNavItem(
-    label: String,
+    tab: TutorialTab,
     selected: Boolean
 ) {
+    val itemColor = if (selected) {
+        Color(0xFF2BBCFF)
+    } else {
+        Color(0xFF9AA6C2)
+    }
+
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        Box(
+        Icon(
+            painter = painterResource(tab.iconRes),
+            contentDescription = tab.label,
             modifier = Modifier
-                .size(28.dp)
-                .clip(CircleShape)
-                .background(
-                    if (selected) {
-                        BudgetPilotAccentBlue.copy(alpha = 0.18f)
-                    } else {
-                        Color.Transparent
-                    }
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = label.first().toString(),
-                color = if (selected) BudgetPilotAccentBlue else BudgetPilotTextSecondary,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold
-            )
-        }
+                .size(24.dp),
+            tint = itemColor
+        )
 
         Text(
-            text = label,
-            color = if (selected) BudgetPilotAccentBlue else BudgetPilotTextSecondary,
+            text = tab.label,
+            color = itemColor,
             fontSize = 11.sp,
             fontWeight = FontWeight.SemiBold
         )
@@ -631,7 +892,11 @@ private fun TutorialSpotlightOverlay(
     onNext: () -> Unit
 ) {
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .graphicsLayer {
+                compositingStrategy = CompositingStrategy.Offscreen
+            }
     ) {
         if (step.target != TutorialTarget.Finish) {
             Box(
@@ -660,14 +925,15 @@ private fun TutorialSpotlightOverlay(
 
 @Composable
 private fun BoxScope.TutorialFocusFrame(
-    target: TutorialTarget
+    target: TutorialTarget,
+    adjustment: TutorialFocusAdjustment =
+        TutorialFocusAdjustments[target] ?: TutorialFocusAdjustment()
 ) {
-    val shape = RoundedCornerShape(28.dp)
-    when (target) {
+    val modifier = when (target) {
         TutorialTarget.OperationsTab -> {
             TutorialBottomNavigationFocusFrame(
                 tab = TutorialTab.Operations,
-                shape = shape
+                adjustment = adjustment
             )
             return
         }
@@ -675,15 +941,11 @@ private fun BoxScope.TutorialFocusFrame(
         TutorialTarget.AccountsTab -> {
             TutorialBottomNavigationFocusFrame(
                 tab = TutorialTab.Accounts,
-                shape = shape
+                adjustment = adjustment
             )
             return
         }
 
-        else -> Unit
-    }
-
-    val modifier = when (target) {
         TutorialTarget.EmptyOperations -> Modifier
             .align(Alignment.Center)
             .padding(horizontal = 32.dp)
@@ -721,26 +983,19 @@ private fun BoxScope.TutorialFocusFrame(
             .padding(top = 326.dp, end = 24.dp)
             .size(width = 96.dp, height = 76.dp)
 
-        TutorialTarget.Finish -> Modifier
-            .align(Alignment.Center)
-            .padding(horizontal = 24.dp)
-            .fillMaxWidth()
-            .height(220.dp)
-
-        TutorialTarget.OperationsTab,
-        TutorialTarget.AccountsTab -> Modifier
+        TutorialTarget.Finish -> return
     }
 
     TutorialFocusFrameSurface(
         modifier = modifier,
-        shape = shape
+        adjustment = adjustment
     )
 }
 
 @Composable
 private fun BoxScope.TutorialBottomNavigationFocusFrame(
     tab: TutorialTab,
-    shape: RoundedCornerShape
+    adjustment: TutorialFocusAdjustment
 ) {
     Row(
         modifier = Modifier
@@ -762,7 +1017,7 @@ private fun BoxScope.TutorialBottomNavigationFocusFrame(
                             .fillMaxWidth()
                             .padding(horizontal = 24.dp)
                             .height(68.dp),
-                        shape = shape
+                        adjustment = adjustment
                     )
                 }
             }
@@ -773,17 +1028,36 @@ private fun BoxScope.TutorialBottomNavigationFocusFrame(
 @Composable
 private fun TutorialFocusFrameSurface(
     modifier: Modifier,
-    shape: RoundedCornerShape
+    adjustment: TutorialFocusAdjustment
 ) {
     Box(
         modifier = modifier
-            .clip(shape)
-            .background(BudgetPilotAccentBlue.copy(alpha = 0.18f))
-            .border(
-                width = 2.dp,
-                color = BudgetPilotAccentBlue,
-                shape = shape
+            .offset(
+                x = adjustment.offsetX,
+                y = adjustment.offsetY
             )
+            .graphicsLayer(
+                scaleX = adjustment.scaleX,
+                scaleY = adjustment.scaleY
+            )
+            .drawWithContent {
+                val cornerRadius = CornerRadius(
+                    x = 28.dp.toPx(),
+                    y = 28.dp.toPx()
+                )
+
+                drawRoundRect(
+                    color = Color.Transparent,
+                    cornerRadius = cornerRadius,
+                    blendMode = BlendMode.Clear
+                )
+
+                drawRoundRect(
+                    color = Color.White.copy(alpha = 0.88f),
+                    cornerRadius = cornerRadius,
+                    style = Stroke(width = 2.dp.toPx())
+                )
+            }
     )
 }
 
@@ -846,6 +1120,13 @@ private data class TutorialStep(
     val target: TutorialTarget
 )
 
+private data class TutorialFocusAdjustment(
+    val offsetX: Dp = 0.dp,
+    val offsetY: Dp = 0.dp,
+    val scaleX: Float = 1f,
+    val scaleY: Float = 1f
+)
+
 private enum class TutorialScene {
     OperationsEmpty,
     AccountsWithWallets,
@@ -874,11 +1155,62 @@ private enum class TutorialTarget {
     Finish
 }
 
-private enum class TutorialTab {
-    Accounts,
-    Operations,
-    Analytics
+private enum class TutorialTab(
+    val label: String,
+    @param:DrawableRes val iconRes: Int
+) {
+    Accounts(
+        label = "Accounts",
+        iconRes = R.drawable.ic_credit_card
+    ),
+    Operations(
+        label = "Operations",
+        iconRes = R.drawable.ic_import_export
+    ),
+    Analytics(
+        label = "Analytics",
+        iconRes = R.drawable.ic_analytics
+    )
 }
+
+private val TutorialCalibrationPhoneWidth = 390.dp
+
+private val TutorialFocusAdjustments = mapOf(
+    TutorialTarget.OperationsTab to TutorialFocusAdjustment(),
+    TutorialTarget.EmptyOperations to TutorialFocusAdjustment(
+        offsetY = (-12).dp
+    ),
+    TutorialTarget.AccountsTab to TutorialFocusAdjustment(
+        offsetX = 20.dp
+    ),
+    TutorialTarget.CurrencySummary to TutorialFocusAdjustment(
+        offsetY = (-24).dp,
+        scaleX = 1.10f,
+        scaleY = 1.10f
+    ),
+    TutorialTarget.AddButton to TutorialFocusAdjustment(
+        offsetX = 4.dp,
+        offsetY = (-24).dp,
+        scaleY = 1.05f
+    ),
+    TutorialTarget.OperationCard to TutorialFocusAdjustment(
+        offsetY = 16.dp,
+        scaleX = 1.15f,
+        scaleY = 1.20f
+    ),
+    TutorialTarget.AccountCards to TutorialFocusAdjustment(
+        offsetY = (-8).dp,
+        scaleX = 1.15f,
+        scaleY = 0.65f
+    ),
+    TutorialTarget.OperationMenu to TutorialFocusAdjustment(
+        offsetX = 16.dp,
+        offsetY = (-28).dp,
+        scaleX = 0.60f,
+        scaleY = 0.60f
+    ),
+    TutorialTarget.Finish to TutorialFocusAdjustment()
+)
 
 private val TutorialSteps = listOf(
     TutorialStep(
@@ -906,8 +1238,14 @@ private val TutorialSteps = listOf(
         target = TutorialTarget.CurrencySummary
     ),
     TutorialStep(
-        title = "Create an operation",
-        description = "Now imagine buying groceries at Lidl with your BNP Paribas account. The operation automatically uses that account currency.",
+        title = "Add an operation",
+        description = "Tap Add to record an expense, income or transfer. The editor will ask for the account, amount, type and date.",
+        scene = TutorialScene.OperationsEmpty,
+        target = TutorialTarget.AddButton
+    ),
+    TutorialStep(
+        title = "Operation created",
+        description = "Here is a grocery expense paid from BNP Paribas. The operation uses the selected account currency automatically.",
         scene = TutorialScene.OperationsWithExpense,
         target = TutorialTarget.OperationCard
     ),
@@ -918,8 +1256,8 @@ private val TutorialSteps = listOf(
         target = TutorialTarget.AccountCards
     ),
     TutorialStep(
-        title = "Edit safely",
-        description = "You can edit an operation later. BudgetPilot recalculates the previous account balance and applies the new operation.",
+        title = "Edit an operation",
+        description = "Open the operation menu and choose Edit. BudgetPilot rolls back the previous balance change before applying the updated operation.",
         scene = TutorialScene.OperationsEditMenu,
         target = TutorialTarget.OperationMenu
     ),

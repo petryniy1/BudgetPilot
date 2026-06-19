@@ -46,5 +46,3 @@ data class BudgetOperationEntity(
     @ColumnInfo("comment")
     val comment: String
 )
-
-

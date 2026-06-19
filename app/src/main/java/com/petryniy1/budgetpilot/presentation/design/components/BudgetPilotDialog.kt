@@ -2,6 +2,7 @@ package com.petryniy1.budgetpilot.presentation.design.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -19,7 +20,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -42,13 +44,22 @@ fun BudgetPilotDialog(
     isDestructive: Boolean = false,
     content: @Composable ColumnScope.() -> Unit
 ) {
+    val scrollState = rememberScrollState()
+
+    val windowHeightPx = LocalWindowInfo.current.containerSize.height
+    val density = LocalDensity.current
+
+    val maxDialogHeight = with(density) {
+        (windowHeightPx * 0.85f).toDp()
+    }
+
     Dialog(
         onDismissRequest = onDismiss
     ) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(max = (LocalConfiguration.current.screenHeightDp * 0.85).dp)
+                .heightIn(max = maxDialogHeight)
                 .budgetPilotOutline(
                     shape = RoundedCornerShape(28.dp)
                 ),
@@ -74,13 +85,24 @@ fun BudgetPilotDialog(
                     )
                 )
 
-                Column(
+                Box(
                     modifier = Modifier
                         .weight(1f, fill = false)
-                        .verticalScroll(rememberScrollState()),
-                    verticalArrangement = Arrangement.spacedBy(14.dp),
-                    content = content
-                )
+                        .fillMaxWidth()
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .verticalScroll(scrollState)
+                            .padding(end = 10.dp),
+                        verticalArrangement = Arrangement.spacedBy(14.dp),
+                        content = content
+                    )
+
+                    BudgetPilotVerticalScrollIndicator(
+                        scrollState = scrollState
+                    )
+                }
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),

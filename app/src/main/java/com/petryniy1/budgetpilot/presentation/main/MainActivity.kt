@@ -1,6 +1,7 @@
 package com.petryniy1.budgetpilot.presentation.main
 
 import android.os.Bundle
+import android.view.animation.DecelerateInterpolator
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.isVisible
@@ -15,9 +16,30 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        installSplashScreen()
+        val splashScreen = installSplashScreen()
 
         super.onCreate(savedInstanceState)
+
+        splashScreen.setOnExitAnimationListener { splashScreenView ->
+            val exitDuration = 220L
+            val exitInterpolator = DecelerateInterpolator()
+
+            splashScreenView.iconView.animate()
+                .scaleX(1.08f)
+                .scaleY(1.08f)
+                .setDuration(exitDuration)
+                .setInterpolator(exitInterpolator)
+                .start()
+
+            splashScreenView.view.animate()
+                .alpha(0f)
+                .setDuration(exitDuration)
+                .setInterpolator(exitInterpolator)
+                .withEndAction {
+                    splashScreenView.remove()
+                }
+                .start()
+        }
 
         initBottomMenu(savedInstanceState)
     }

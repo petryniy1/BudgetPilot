@@ -31,7 +31,19 @@ import com.petryniy1.budgetpilot.presentation.design.BudgetPilotTextSecondary
 import com.petryniy1.budgetpilot.presentation.feature.accounts.AccountsScreen
 import com.petryniy1.budgetpilot.presentation.feature.analytics.AnalyticsScreen
 import com.petryniy1.budgetpilot.presentation.feature.operations.BudgetOperationsScreen
+import com.petryniy1.budgetpilot.presentation.feature.tutorial.GuidedTutorialFocusCalibrationScreen
 import java.time.LocalDate
+
+@Preview(
+    name = "Tutorial focus calibration - Interactive Mode",
+    widthDp = 580,
+    heightDp = 844,
+    showBackground = true
+)
+@Composable
+private fun GuidedTutorialFocusCalibrationPreview() {
+    GuidedTutorialFocusCalibrationScreen()
+}
 
 @Preview(
     name = "Accounts with bottom menu - phone",
@@ -39,12 +51,12 @@ import java.time.LocalDate
     heightDp = 844,
     showBackground = true
 )
-//@Preview(
-//    name = "Accounts with bottom menu - tablet landscape",
-//    widthDp = 900,
-//    heightDp = 600,
-//    showBackground = true
-//)
+@Preview(
+    name = "Accounts with bottom menu - tablet landscape",
+    widthDp = 900,
+    heightDp = 600,
+    showBackground = true
+)
 @Composable
 private fun AccountsScreenWithBottomMenuPreview() {
     BudgetPilotPreviewScaffold(
