@@ -11,6 +11,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,9 +25,9 @@ import com.petryniy1.budgetpilot.presentation.design.components.BudgetPilotSnack
 import com.petryniy1.budgetpilot.presentation.uiState.AccountActionError
 import com.petryniy1.budgetpilot.presentation.uiState.AccountActionUiState
 import com.petryniy1.budgetpilot.presentation.uiState.AccountEditorUiState
+import com.petryniy1.budgetpilot.presentation.uiState.AccountEditorUiStateSaver
 import java.math.BigDecimal
 import java.math.RoundingMode
-
 
 @Composable
 fun AccountsRoute(
@@ -35,7 +36,9 @@ fun AccountsRoute(
     val accounts = viewModel.accounts.collectAsStateWithLifecycle()
     val actionState = viewModel.accountActionState.collectAsStateWithLifecycle()
 
-    var editorState by remember {
+    var editorState by rememberSaveable(
+        stateSaver = AccountEditorUiStateSaver
+    ) {
         mutableStateOf<AccountEditorUiState?>(null)
     }
 

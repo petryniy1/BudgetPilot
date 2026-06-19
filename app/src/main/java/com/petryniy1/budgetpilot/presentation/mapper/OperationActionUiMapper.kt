@@ -4,8 +4,6 @@ import com.petryniy1.budgetpilot.domain.results.OperationActionResult
 import com.petryniy1.budgetpilot.presentation.uiState.OperationActionError
 import com.petryniy1.budgetpilot.presentation.uiState.OperationActionUiState
 
-
-
 fun OperationActionResult.toOperationActionUiState(): OperationActionUiState {
     return when (this) {
         OperationActionResult.Success ->

@@ -16,9 +16,9 @@ import androidx.compose.ui.unit.sp
 
 val BudgetPilotScreenGradient = Brush.verticalGradient(
     colors = listOf(
-        Color(0xFF0B1220),
+        Color(0xFF030407),
         Color(0xFF002967),
-        Color(0xFF0B1220)
+        Color(0xFF030407)
     )
 )
 val BudgetPilotAccentButtonGradient = Brush.horizontalGradient(
@@ -35,10 +35,9 @@ val BudgetPilotPrimaryCardGradient = Brush.linearGradient(
     )
 )
 val BudgetPilotCurrencyFrameOverlay = Color(0x14FFFFFF)
-val BudgetPilotCurrencyFrameBorder = Color(0x30FFFFFF)
 val BudgetPilotTextPrimary = Color(0xFFF5F7FF)
 val BudgetPilotTextSecondary = Color(0xFFB9C3D9)
-val BudgetPilotAccentBlue = Color(0xFF3DBDFF)
+val BudgetPilotAccentBlue = Color(0xFFFCFDFD)
 val BudgetPilotError = Color(0xFFFF6B6B)
 val BudgetPilotAmountNeutral = Color(0xFFD6DCE8)
 val BudgetPilotTextShadow = Shadow(
