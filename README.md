@@ -277,6 +277,12 @@ Planned test expansion:
 - screenshot regression tests;
 - startup and scrolling performance benchmarks.
 
+### End-to-end UI testing
+
+End-to-end coverage lives in a separate repository, [BudgetPilot Appium Tests](https://github.com/petryniy1/budgetpilot-appium-tests) — a Page Object UI automation framework that drives a built APK through Appium as a real user would, with CI that boots an emulator and runs the suite on every push.
+
+The `contentDescription` hooks that framework relies on (account name/balance fields, currency chips, add buttons, and similar) are added here **incrementally, only where a real test actually needed one** — not pre-instrumented everywhere up front. That's a deliberate choice: it keeps this app representative of what an automation engineer actually walks into on a real, pre-existing codebase — some screens testable, others not yet — rather than a demo app conveniently instrumented in advance for its own test suite.
+
 ## Modernization strategy
 
 BudgetPilot started as a traditional Android project and is being modernized without destabilizing the complete application at once.
