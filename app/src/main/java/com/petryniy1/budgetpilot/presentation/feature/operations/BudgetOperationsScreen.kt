@@ -171,6 +171,7 @@ private fun BudgetOperationsHeader(
             )
 
             GradientAddButton(
+                contentDescription = "operations_add_button",
                 onClick = onAddOperationClick
             )
         }

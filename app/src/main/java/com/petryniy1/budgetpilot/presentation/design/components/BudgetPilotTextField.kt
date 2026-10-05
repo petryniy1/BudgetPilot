@@ -9,15 +9,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import com.petryniy1.budgetpilot.presentation.design.BudgetPilotAccentBlue
 import com.petryniy1.budgetpilot.presentation.design.BudgetPilotError
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import com.petryniy1.budgetpilot.presentation.design.BudgetPilotTextPrimary
 import com.petryniy1.budgetpilot.presentation.design.BudgetPilotTextSecondary
 
 @Composable
 fun BudgetPilotTextField(
+    modifier: Modifier = Modifier,
+    contentDescription: String? = null,
     value: String,
     onValueChange: (String) -> Unit,
     label: String,
-    modifier: Modifier = Modifier,
     error: String? = null,
     singleLine: Boolean = true,
     keyboardType: KeyboardType = KeyboardType.Text,

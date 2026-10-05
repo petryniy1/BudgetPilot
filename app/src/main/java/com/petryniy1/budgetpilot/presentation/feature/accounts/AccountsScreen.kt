@@ -31,6 +31,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -154,6 +156,7 @@ private fun AccountsHeader(
             )
 
             GradientAddButton(
+                contentDescription = "accounts_add_button",
                 onClick = onAddAccountClick
             )
         }
@@ -411,7 +414,9 @@ private fun AccountItem(
 
             Text(
                 text = account.balance.formatForDisplay(),
-                modifier = Modifier.align(Alignment.BottomEnd),
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .semantics { contentDescription = "account_balance_value_${account.name}" },
                 color = BudgetPilotAmountNeutral,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,

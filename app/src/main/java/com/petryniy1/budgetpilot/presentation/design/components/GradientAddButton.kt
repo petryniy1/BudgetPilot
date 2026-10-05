@@ -9,16 +9,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.petryniy1.budgetpilot.presentation.design.BudgetPilotAccentButtonGradient
 import com.petryniy1.budgetpilot.presentation.design.BudgetPilotTextPrimary
 import com.petryniy1.budgetpilot.presentation.design.budgetPilotOutline
-import androidx.compose.ui.text.font.FontWeight
 
 @Composable
 fun GradientAddButton(
     text: String = "Add",
+    contentDescription: String? = null,
     onClick: () -> Unit
 ) {
     Box(
@@ -29,6 +32,13 @@ fun GradientAddButton(
             )
             .budgetPilotOutline()
             .clickable(onClick = onClick)
+            .let { base ->
+                if (contentDescription != null) {
+                    base.semantics { this.contentDescription = contentDescription }
+                } else {
+                    base
+                }
+            }
             .padding(horizontal = 26.dp, vertical = 14.dp),
         contentAlignment = Alignment.Center
     ) {
